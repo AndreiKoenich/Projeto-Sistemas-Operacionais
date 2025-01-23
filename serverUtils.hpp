@@ -6,6 +6,6 @@ using namespace std;
 
 void createServerDirectory();
 void createClientDirectory(char username[]);
-void showPacketServer (Packet clientPacket);
+void showPacketServer (UploadPacket clientPacket);
 
 #endif

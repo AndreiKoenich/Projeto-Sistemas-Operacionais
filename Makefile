@@ -6,8 +6,8 @@
 
 # Comando para linkar os arquivos compilados e gerar o executável
 link: 
-	g++ -g -Wall -o myClient myClient.cpp clientCommands.cpp clientUtils.cpp
-	g++ -g -Wall -o myServer myServer.cpp serverUtils.cpp
+	g++ -g -fsanitize=address -Wall -o myClient myClient.cpp clientCommands.cpp clientUtils.cpp
+	g++ -g -fsanitize=address -Wall -o myServer myServer.cpp serverUtils.cpp
 	
 # Comando padrão do Makefile, executa o alvo "run" por padrão
 .DEFAULT_GOAL := link

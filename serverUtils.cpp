@@ -33,11 +33,13 @@ void createClientDirectory(char username[]) {
         }            
 }   
 
-void showPacketServer (Packet clientPacket) {
+void showPacketServer (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote recebido com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.type << endl;  
-    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;     
+    cout << "Tipo:" << clientPacket.type << endl;
+    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
+    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
     cout << "Conteudo:" << clientPacket.payload << endl;
     cout << "-----------------------------------------------\n" << endl;
 }

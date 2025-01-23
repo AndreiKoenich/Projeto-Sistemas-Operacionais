@@ -3,9 +3,9 @@
 
 using namespace std;
 
-const uint16_t CLIENT_PORT_NUMBER = 8080;
+const uint16_t CLIENT_PORT_NUMBER = 7070;
 const uint16_t NUMBER_OF_PARAMETERS = 3;
-const uint16_t NUMBER_OF_PACKET_FIELDS = 2;
+const uint16_t NUMBER_OF_PACKET_FIELDS = 3;
 const char CLIENT_DIRECTORY_PREFIX[] = "sync_dir_";
 
 const string UPLOAD_COMMAND = "upload ";
