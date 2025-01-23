@@ -1,0 +1,43 @@
+#include <iostream>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <cstring>
+
+#include "packetStruct.hpp"
+#include "serverConstants.hpp"
+using namespace std;
+
+void createServerDirectory() {
+    struct stat st = {0};
+    if (stat(SERVER_DIRECTORY_NAME, &st) == -1) 
+        if (mkdir(SERVER_DIRECTORY_NAME, 0777) == -1) {
+            cout << "Erro ao criar o diretorio " << SERVER_DIRECTORY_NAME << "para sincronizacao dos arquivos." << endl;
+            exit(1);
+        }            
+}
+
+void createClientDirectory(char username[]) {
+
+    char clientDirectoryName[FULL_DIRECTORY_NAME_SIZE];
+    memset(clientDirectoryName,0,sizeof(clientDirectoryName));
+
+    getcwd(clientDirectoryName,FULL_DIRECTORY_NAME_SIZE);
+    strcat(clientDirectoryName,CLIENT_DIRECTORY_NAME);
+    strcat(clientDirectoryName,username);
+
+    struct stat st = {0};
+    if (stat(clientDirectoryName, &st) == -1) 
+        if (mkdir(clientDirectoryName, 0777) == -1) {
+            cout << "Erro ao criar o diretorio remoto do cliente." << endl;
+            exit(1);
+        }            
+}   
+
+void showPacketServer (Packet clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote recebido com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.type << endl;  
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;     
+    cout << "Conteudo:" << clientPacket.payload << endl;
+    cout << "-----------------------------------------------\n" << endl;
+}

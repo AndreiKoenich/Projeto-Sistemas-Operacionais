@@ -1,0 +1,8 @@
+enum packetType {
+    HELLO,
+    UPLOAD_FILENAME,
+    UPLOAD_PAYLOAD,
+    DOWNLOAD_TYPE,
+    DELETE_TYPE,
+    LIST_SERVER_TYPE,
+};
