@@ -11,6 +11,7 @@
 #include "packetStruct.hpp"
 #include "packetEnum.hpp"
 #include "serverUtils.hpp"
+#include "serverPacketReceiving.hpp"
 
 using namespace std;
 

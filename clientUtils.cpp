@@ -7,7 +7,6 @@
 
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
-#include "clientUtils.hpp"
 #include "packetEnum.hpp"
 #include "packetStruct.hpp"
 #include <netinet/in.h>

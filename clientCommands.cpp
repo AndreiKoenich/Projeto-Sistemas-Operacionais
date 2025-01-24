@@ -4,7 +4,6 @@
 
 #include "clientConstants.hpp"
 #include "clientUtils.hpp"
-#include "clientCommands.hpp"
 #include "packetStruct.hpp"
 #include "packetEnum.hpp"
 
