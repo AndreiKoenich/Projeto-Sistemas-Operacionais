@@ -19,37 +19,21 @@ void receivePacket (int serverSocket) {
     int clientSocket = accept(serverSocket, nullptr, nullptr);
     cout << "Nova conexao aceita com sucesso." << endl;
 
-    UploadPacket clientPacket;
-    uint16_t type;
-    uint16_t payloadLength;
-    uint16_t fileNameLength;
+    uint16_t packetType;
 
-    //while (true) {
-        recv(clientSocket, &type, sizeof(type), 0);
-        clientPacket.type = ntohs(type);
+    while (true) {
+        recv(clientSocket, &packetType, sizeof(packetType), 0);
+        packetType = ntohs(packetType);
 
-        recv(clientSocket, &fileNameLength, sizeof(payloadLength), 0);
-        clientPacket.fileNameLength = ntohs(fileNameLength);
-
-        clientPacket.fileName =(char*)calloc(clientPacket.fileNameLength,sizeof(char));
-        recv(clientSocket, clientPacket.fileName, clientPacket.fileNameLength, 0);
-
-        recv(clientSocket, &payloadLength, sizeof(payloadLength), 0);
-        clientPacket.payloadLength = ntohs(payloadLength);
-
-        clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
-        recv(clientSocket, clientPacket.payload, payloadLength, 0);
-
-        switch (clientPacket.type) {
+        switch (packetType) {
             case HELLO:
-                createClientDirectory(clientPacket.payload);
+                receiveHelloPacket(clientSocket);
+            break;
+            case UPLOAD:
+                receiveUploadPacket(clientSocket);
             break;
         }
-
-        showPacketServer(clientPacket);
-        free(clientPacket.fileName);
-        free(clientPacket.payload);
-    //}
+    }
 }
 
 void startServerSocket() {

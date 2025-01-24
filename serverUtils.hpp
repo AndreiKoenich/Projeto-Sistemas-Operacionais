@@ -6,6 +6,9 @@ using namespace std;
 
 void createServerDirectory();
 void createClientDirectory(char username[]);
-void showPacketServer (UploadPacket clientPacket);
+void receiveUploadPacket (int clientSocket);
+void showUploadPacketServer (UploadPacket clientPacket);
+void receiveHelloPacket (int clientSocket);
+void showHelloPacketServer (HelloPacket clientPacket);
 
 #endif

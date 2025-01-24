@@ -42,10 +42,10 @@ void reverseString(char* str)
     }
 }
 
-void showPacketClient (UploadPacket clientPacket) {
+void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.type << endl;
+    cout << "Pacote upload enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
@@ -53,40 +53,67 @@ void showPacketClient (UploadPacket clientPacket) {
     cout << "-----------------------------------------------\n" << endl;
 }
 
-void sendPacket(int clientSocket, UploadPacket *clientPacket) {
+void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
 
-    uint16_t type = htons(clientPacket->type);
+    uint16_t packetType = htons(clientPacket->packetType);
     uint16_t payloadLength = htons(clientPacket->payloadLength);
     uint16_t fileNameLength = htons(clientPacket->fileNameLength);
 
-    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_PACKET_FIELDS + clientPacket->payloadLength + clientPacket->fileNameLength;
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_UPLOAD_PACKET_FIELDS + clientPacket->payloadLength + clientPacket->fileNameLength;
     char *buffer = (char*)calloc(bufferSize,sizeof(char));
 
-    memcpy(buffer,&type,sizeof(type));
-    memcpy(buffer+sizeof(type),&fileNameLength, sizeof(clientPacket->fileNameLength));
-    memcpy(buffer+sizeof(type)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
-    memcpy(buffer+sizeof(type)+sizeof(fileNameLength)+clientPacket->fileNameLength, &payloadLength, sizeof(clientPacket->payloadLength));
-    memcpy(buffer+sizeof(type)+sizeof(fileNameLength)+clientPacket->fileNameLength+sizeof(clientPacket->payloadLength), clientPacket->payload, clientPacket->payloadLength);
+    memcpy(buffer,&packetType,sizeof(packetType));
+    memcpy(buffer+sizeof(packetType),&fileNameLength, sizeof(clientPacket->fileNameLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength, &payloadLength, sizeof(clientPacket->payloadLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength+sizeof(clientPacket->payloadLength), clientPacket->payload, clientPacket->payloadLength);
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    showPacketClient(*clientPacket);
+    showUploadPacketClient(*clientPacket);
+
+    free(buffer);
+}
+
+void showHelloPacketClient (HelloPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote hello enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do nome do usuario:" << clientPacket.usernameLength << endl;
+    cout << "Conteudo:" << clientPacket.username << endl;
+    cout << "-----------------------------------------------\n" << endl;
+}
+
+void sendHelloPacket(int clientSocket, HelloPacket *clientPacket) {
+
+    uint16_t packetType = htons(clientPacket->packetType);
+    uint16_t usernameLength = htons(clientPacket->usernameLength);
+
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_HELLO_PACKET_FIELDS + clientPacket->usernameLength;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+
+    memcpy(buffer,&packetType,sizeof(packetType));
+    memcpy(buffer+sizeof(packetType),&usernameLength, sizeof(clientPacket->usernameLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(usernameLength),clientPacket->username, clientPacket->usernameLength);
+
+    send(clientSocket, buffer, bufferSize, 0);
+
+    showHelloPacketClient(*clientPacket);
 
     free(buffer);
 }
 
 void createRemoteDirectory (char username[], int clientSocket) {
-    UploadPacket clientPacket;
-    clientPacket.type = HELLO;
-    clientPacket.fileNameLength = 0;
-    clientPacket.payloadLength = strlen(username)+1;
-    clientPacket.payload = (char*)calloc(clientPacket.payloadLength,sizeof(char));
+    HelloPacket clientPacket;
+    clientPacket.packetType = HELLO;
+    clientPacket.usernameLength = strlen(username)+1;
+    clientPacket.username = (char*)calloc(clientPacket.usernameLength,sizeof(char));
 
-    strcpy(clientPacket.payload, username);
-    clientPacket.payload[clientPacket.payloadLength-1] = '\0';
+    strcpy(clientPacket.username, username);
+    clientPacket.username[clientPacket.usernameLength-1] = '\0';
 
-    sendPacket(clientSocket, &clientPacket);
-    free(clientPacket.payload);
+    sendHelloPacket(clientSocket, &clientPacket);
+    free(clientPacket.username);
 }
 
 void createClientDirectory(char username[]) {

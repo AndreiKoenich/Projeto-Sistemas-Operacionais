@@ -6,7 +6,7 @@
 using namespace std;
 
 typedef struct { 
-    uint16_t type;
+    uint16_t packetType;
     
     uint16_t fileNameLength;
     char * fileName;
@@ -17,7 +17,7 @@ typedef struct {
 } UploadPacket; 
 
 typedef struct { 
-    uint16_t type;
+    uint16_t packetType;
 
     uint16_t usernameLength;
     char* username; 

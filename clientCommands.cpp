@@ -36,7 +36,7 @@ void uploadCommand(string command, int clientSocket) {
 	uint16_t fileLength=ftell(selectedFile);
 	fseek(selectedFile, 0, SEEK_SET);
 
-    clientPacket.type = UPLOAD;
+    clientPacket.packetType = UPLOAD;
     clientPacket.payloadLength = fileLength;
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
@@ -53,7 +53,7 @@ void uploadCommand(string command, int clientSocket) {
     clientPacket.payload[fileLength-1] = '\0';
 
     fclose(selectedFile);
-    sendPacket(clientSocket, &clientPacket);
+    sendUploadPacket(clientSocket, &clientPacket);
     free(clientPacket.payload);
     cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
     getch_();
