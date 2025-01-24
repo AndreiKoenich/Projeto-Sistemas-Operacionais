@@ -40,8 +40,6 @@ void uploadCommand(string command, int clientSocket) {
     clientPacket.payloadLength = fileLength;
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
-    cout << clientPacket.payloadLength << endl;
-
     if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != fileLength) {
         cout << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
         cout << "Pressione qualquer tecla para continuar." << endl;
