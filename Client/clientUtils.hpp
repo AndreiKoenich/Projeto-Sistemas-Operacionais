@@ -6,6 +6,8 @@
 int getch_();
 void reverseString(char* str);
 
+void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket);
+void showDownloadPacketClient (DownloadPacket clientPacket);
 void showUploadPacketClient (UploadPacket clientPacket);
 void showHelloPacketClient (HelloPacket clientPacket);
 void showByePacketClient (ByePacket clientPacket);

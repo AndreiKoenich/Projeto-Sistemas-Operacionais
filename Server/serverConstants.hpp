@@ -5,3 +5,5 @@ const std::uint16_t SERVER_PORT_NUMBER = 8080;
 const std::uint16_t FULL_DIRECTORY_NAME_SIZE = 1024;
 const char SERVER_DIRECTORY_NAME[] = "sync_dir_SERVER";
 const char CLIENT_DIRECTORY_NAME[] = "//sync_dir_SERVER//";
+
+const uint16_t NUMBER_OF_DOWNLOAD_PACKET_FIELDS = 3;

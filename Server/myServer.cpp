@@ -15,7 +15,7 @@
 
 using namespace std;
 
-void receivePacket (int serverSocket) {
+void receivePacketFromClient (int serverSocket) {
 
     int clientSocket = accept(serverSocket, nullptr, nullptr);
     cout << "Nova conexao aceita com sucesso." << endl;
@@ -31,6 +31,9 @@ void receivePacket (int serverSocket) {
         switch (packetType) {
             case HELLO:
                 username = receiveHelloPacket(clientSocket);
+            break;
+            case REQUEST_DOWNLOAD:
+                receiveRequestDownloadPacket(clientSocket, username);
             break;
             case UPLOAD:
                 receiveUploadPacket(clientSocket, username);
@@ -54,7 +57,7 @@ void startServerSocket() {
 
     while (true) {
         cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
-        receivePacket(serverSocket);
+        receivePacketFromClient(serverSocket);
     }
 
     close(serverSocket);

@@ -4,9 +4,28 @@
 
 #include "clientConstants.hpp"
 #include "clientPacketSending.hpp"
+#include "clientPacketReceiving.hpp"
 #include "clientUtils.hpp"
 #include "packetStruct.hpp"
 #include "packetEnum.hpp"
+
+void requestDownloadCommand(string username, string command, int clientSocket) {
+
+    string fileName = command.substr(DOWNLOAD_COMMAND.length(), command.length() - DOWNLOAD_COMMAND.length());
+
+    RequestDownloadPacket clientPacket;
+    clientPacket.packetType = REQUEST_DOWNLOAD;
+    clientPacket.fileNameLength = fileName.length()+1;
+    clientPacket.fileName = (char*)calloc(clientPacket.fileNameLength,sizeof(char));
+    fileName.copy(clientPacket.fileName,clientPacket.fileNameLength-1);
+    clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
+
+    sendRequestDownloadPacket(clientSocket, &clientPacket);
+    cout << "Comando de requisicao de download executado com sucesso." << endl;
+    receivePacketFromServer(clientSocket, username);
+
+    free(clientPacket.fileName);
+}
 
 void uploadCommand(string command, int clientSocket) {
 
@@ -62,4 +81,5 @@ void exitCommand(int clientSocket) {
     ByePacket clientPacket;  
     clientPacket.packetType = BYE;
     sendByePacket(clientSocket, &clientPacket);
+    close(clientSocket);
 }

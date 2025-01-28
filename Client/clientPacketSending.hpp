@@ -3,6 +3,7 @@
 
 #include "packetStruct.hpp"
 
+void sendRequestDownloadPacket(int clientSocket, RequestDownloadPacket *clientPacket);
 void sendUploadPacket(int clientSocket, UploadPacket *clientPacket);
 void sendHelloPacket(int clientSocket, HelloPacket *clientPacket);
 void sendByePacket(int clientSocket, ByePacket *clientPacket);

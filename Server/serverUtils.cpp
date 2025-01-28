@@ -57,6 +57,17 @@ void showUploadPacketServer (UploadPacket clientPacket) {
     cout << "-----------------------------------------------\n" << endl;
 }
 
+void showDownloadPacketServer (DownloadPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote download enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
+    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
+    cout << "Conteudo:" << clientPacket.payload << endl;
+    cout << "-----------------------------------------------\n" << endl;
+}
+
 void showByePacketServer () {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote bye recebido com sucesso.\n" << endl;

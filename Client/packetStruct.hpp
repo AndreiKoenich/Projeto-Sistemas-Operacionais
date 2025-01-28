@@ -10,6 +10,25 @@ typedef struct {
     
     uint16_t fileNameLength;
     char * fileName;
+      
+} RequestDownloadPacket; 
+
+typedef struct { 
+    uint16_t packetType;
+    
+    uint16_t fileNameLength;
+    char * fileName;
+
+    uint16_t payloadLength;
+    char* payload; 
+      
+} DownloadPacket; 
+
+typedef struct { 
+    uint16_t packetType;
+    
+    uint16_t fileNameLength;
+    char * fileName;
 
     uint16_t payloadLength;
     char* payload; 

@@ -42,6 +42,26 @@ void reverseString(char* str)
     }
 }
 
+void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote de requisicao de download enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
+    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
+    cout << "-----------------------------------------------\n" << endl;   
+}
+
+void showDownloadPacketClient (DownloadPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote download recebido com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
+    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
+    cout << "Conteudo:" << clientPacket.payload << endl;
+    cout << "-----------------------------------------------\n" << endl;
+}
+
 void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote upload enviado com sucesso.\n" << endl;
@@ -52,7 +72,6 @@ void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "Conteudo:" << clientPacket.payload << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
-
 
 void showHelloPacketClient (HelloPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
@@ -116,16 +135,16 @@ void showMenu(char *argv[], int clientSocket) {
 
         cout << "Digite o comando:" << endl;
         string command;
+        string username(argv[1]);
         getline(cin, command);
 
-        if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0) {
+        if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0)
             uploadCommand(command, clientSocket);
-        }
-            
-        /*
+    
         else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
-            //downloadCommand(command, clientSocket);
+            requestDownloadCommand(username, command, clientSocket);
 
+        /*
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
             //deleteCommand(command, clientSocket);
 
@@ -141,7 +160,6 @@ void showMenu(char *argv[], int clientSocket) {
 
         else if (command.compare(0, EXIT_COMMAND.length(), EXIT_COMMAND) == 0) {
             exitCommand(clientSocket);
-            close(clientSocket);
             exit(0);
         }
 

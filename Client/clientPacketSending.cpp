@@ -7,6 +7,23 @@
 #include "packetEnum.hpp"
 #include "packetStruct.hpp"
 
+void sendRequestDownloadPacket(int clientSocket, RequestDownloadPacket *clientPacket) {
+    uint16_t packetType = htons(clientPacket->packetType);
+    uint16_t fileNameLength = htons(clientPacket->fileNameLength);
+
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_REQUEST_DOWNLOAD_PACKET_FIELDS + clientPacket->fileNameLength;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+    memcpy(buffer,&packetType,sizeof(packetType));
+    memcpy(buffer+sizeof(packetType),&fileNameLength, sizeof(clientPacket->fileNameLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
+
+    send(clientSocket, buffer, bufferSize, 0);
+
+    showRequestDownloadPacketClient(*clientPacket);
+
+    free(buffer); 
+}
+
 void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
 
     uint16_t packetType = htons(clientPacket->packetType);
