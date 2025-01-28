@@ -7,18 +7,16 @@
 # Variáveis de flags de compilação e de diretórios
 FLAGS := -g -fsanitize=address -Wall -o
 
-CLIENT_DIR := Client
-CLIENT_SRC := $(CLIENT_DIR)/myClient.cpp \
-              $(CLIENT_DIR)/clientCommands.cpp \
-              $(CLIENT_DIR)/clientUtils.cpp \
-              $(CLIENT_DIR)/clientPacketSending.cpp \
-              $(CLIENT_DIR)/clientPacketReceiving.cpp
+CLIENT_SRC := Client/myClient.cpp \
+              Client/clientCommands.cpp \
+              Client/clientUtils.cpp \
+              Client/clientPacketSending.cpp \
+              Client/clientPacketReceiving.cpp
 
-SERVER_DIR := Server
-SERVER_SRC := $(SERVER_DIR)/myServer.cpp \
-              $(SERVER_DIR)/serverUtils.cpp \
-              $(SERVER_DIR)/serverPacketReceiving.cpp \
-              $(SERVER_DIR)/serverPacketSending.cpp
+SERVER_SRC := Server/myServer.cpp \
+              Server/serverUtils.cpp \
+              Server/serverPacketReceiving.cpp \
+              Server/serverPacketSending.cpp
 
 # Comando para linkar os arquivos compilados e gerar o executável
 link: 
