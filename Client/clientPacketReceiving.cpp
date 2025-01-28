@@ -77,5 +77,10 @@ void receivePacketFromServer (int clientSocket, string username) {
         case DOWNLOAD:
             receiveDownloadPacket(clientSocket, username);
         break;
+        case DOWNLOAD_ERROR:
+            cout << "Erro ao tentar fazer download do arquivo no servidor." << endl;
+            cout << "Pressione qualquer tecla para continuar." << endl;
+            getch_();
+        break;
     }
 }

@@ -4,5 +4,6 @@
 #include "packetStruct.hpp"
 
 void sendDownloadPacket(int clientSocket, DownloadPacket *clientPacket);
+void sendDownloadErrorPacket(int clientSocket, DownloadErrorPacket *clientPacket);
 
 #endif

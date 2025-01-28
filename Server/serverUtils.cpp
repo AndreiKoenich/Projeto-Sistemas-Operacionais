@@ -74,3 +74,10 @@ void showByePacketServer () {
     cout << "Tipo:" << BYE << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
+
+void showDownloadErrorPacketServer() {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote de erro de download enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << DOWNLOAD_ERROR << endl;
+    cout << "-----------------------------------------------\n" << endl;
+}

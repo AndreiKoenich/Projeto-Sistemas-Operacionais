@@ -7,3 +7,4 @@ const char SERVER_DIRECTORY_NAME[] = "sync_dir_SERVER";
 const char CLIENT_DIRECTORY_NAME[] = "//sync_dir_SERVER//";
 
 const uint16_t NUMBER_OF_DOWNLOAD_PACKET_FIELDS = 3;
+const uint16_t NUMBER_OF_DOWNLOAD_ERROR_PACKET_FIELDS = 1;

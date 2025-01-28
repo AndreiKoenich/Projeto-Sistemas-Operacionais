@@ -70,8 +70,13 @@ void receiveRequestDownloadPacket(int clientSocket, string username) {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "rb")) == NULL) {
-        cout << "Erro na criacao ou abertura do arquivo nao-sincronizado no diretorio do servidor, ao tentar executar o comando download." << endl;
-        exit(1);
+        DownloadErrorPacket errorPacket;
+        errorPacket.packetType = DOWNLOAD_ERROR;
+        sendDownloadErrorPacket(clientSocket, &errorPacket);
+
+        free(usernameStr);
+        free(clientPacket.fileName);
+        return;
     }
 
     fseek(selectedFile, 0, SEEK_END);
@@ -81,12 +86,11 @@ void receiveRequestDownloadPacket(int clientSocket, string username) {
     clientPacket.payloadLength = fileLength;
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
-    if(fread(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
-        cout << "Erro na leitura do arquivo nao-sincronizado, ao utilizar o comando download." << endl;
-        exit(1);
-    }
-
-    sendDownloadPacket(clientSocket, &clientPacket);
+    if(fread(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) 
+        cout << "Erro na leitura do arquivo nao-sincronizado, ao utilizar o comando download, para armazenar os dados em buffer." << endl;
+    
+    else
+        sendDownloadPacket(clientSocket, &clientPacket);
 
     fclose(selectedFile);
     free(usernameStr);

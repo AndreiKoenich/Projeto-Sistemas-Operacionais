@@ -22,7 +22,12 @@ typedef struct {
     uint16_t payloadLength;
     char* payload; 
       
-} DownloadPacket; 
+} DownloadPacket;
+
+typedef struct { 
+    uint16_t packetType;
+      
+} DownloadErrorPacket; 
 
 typedef struct { 
     uint16_t packetType;

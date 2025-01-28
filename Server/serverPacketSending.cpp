@@ -27,3 +27,18 @@ void sendDownloadPacket(int clientSocket, DownloadPacket *clientPacket) {
 
     free(buffer);
 }
+
+void sendDownloadErrorPacket(int clientSocket, DownloadErrorPacket *clientPacket) {
+
+    uint16_t packetType = htons(clientPacket->packetType);
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_DOWNLOAD_ERROR_PACKET_FIELDS;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+
+    memcpy(buffer,&packetType,sizeof(packetType));
+
+    send(clientSocket, buffer, bufferSize, 0);
+
+    showDownloadErrorPacketServer();
+
+    free(buffer);
+}
