@@ -56,3 +56,10 @@ void showUploadPacketServer (UploadPacket clientPacket) {
     cout << "Conteudo:" << clientPacket.payload << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
+
+void showByePacketServer () {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote bye recebido com sucesso.\n" << endl;
+    cout << "Tipo:" << BYE << endl;
+    cout << "-----------------------------------------------\n" << endl;
+}

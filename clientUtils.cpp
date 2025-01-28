@@ -4,12 +4,13 @@
 #include <termios.h> 
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <netinet/in.h>
 
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
+#include "clientPacketSending.hpp"
 #include "packetEnum.hpp"
 #include "packetStruct.hpp"
-#include <netinet/in.h>
 
 using namespace std;
 
@@ -52,27 +53,6 @@ void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "-----------------------------------------------\n" << endl;
 }
 
-void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
-
-    uint16_t packetType = htons(clientPacket->packetType);
-    uint16_t payloadLength = htons(clientPacket->payloadLength);
-    uint16_t fileNameLength = htons(clientPacket->fileNameLength);
-
-    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_UPLOAD_PACKET_FIELDS + clientPacket->payloadLength + clientPacket->fileNameLength;
-    char *buffer = (char*)calloc(bufferSize,sizeof(char));
-
-    memcpy(buffer,&packetType,sizeof(packetType));
-    memcpy(buffer+sizeof(packetType),&fileNameLength, sizeof(clientPacket->fileNameLength));
-    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
-    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength, &payloadLength, sizeof(clientPacket->payloadLength));
-    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength+sizeof(clientPacket->payloadLength), clientPacket->payload, clientPacket->payloadLength);
-
-    send(clientSocket, buffer, bufferSize, 0);
-
-    showUploadPacketClient(*clientPacket);
-
-    free(buffer);
-}
 
 void showHelloPacketClient (HelloPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
@@ -83,23 +63,11 @@ void showHelloPacketClient (HelloPacket clientPacket) {
     cout << "-----------------------------------------------\n" << endl;
 }
 
-void sendHelloPacket(int clientSocket, HelloPacket *clientPacket) {
-
-    uint16_t packetType = htons(clientPacket->packetType);
-    uint16_t usernameLength = htons(clientPacket->usernameLength);
-
-    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_HELLO_PACKET_FIELDS + clientPacket->usernameLength;
-    char *buffer = (char*)calloc(bufferSize,sizeof(char));
-
-    memcpy(buffer,&packetType,sizeof(packetType));
-    memcpy(buffer+sizeof(packetType),&usernameLength, sizeof(clientPacket->usernameLength));
-    memcpy(buffer+sizeof(packetType)+sizeof(usernameLength),clientPacket->username, clientPacket->usernameLength);
-
-    send(clientSocket, buffer, bufferSize, 0);
-
-    showHelloPacketClient(*clientPacket);
-
-    free(buffer);
+void showByePacketClient (ByePacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote bye enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "-----------------------------------------------\n" << endl;
 }
 
 void createRemoteDirectory (char username[], int clientSocket) {
@@ -172,6 +140,7 @@ void showMenu(char *argv[], int clientSocket) {
             helpMenu();
 
         else if (command.compare(0, EXIT_COMMAND.length(), EXIT_COMMAND) == 0) {
+            exitCommand(clientSocket);
             close(clientSocket);
             system("clear");
             exit(0);

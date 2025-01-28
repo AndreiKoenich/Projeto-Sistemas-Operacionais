@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 
 #include "clientConstants.hpp"
+#include "clientPacketSending.hpp"
 #include "clientUtils.hpp"
 #include "packetStruct.hpp"
 #include "packetEnum.hpp"
@@ -51,7 +52,14 @@ void uploadCommand(string command, int clientSocket) {
 
     fclose(selectedFile);
     sendUploadPacket(clientSocket, &clientPacket);
+    free(clientPacket.fileName);
     free(clientPacket.payload);
     cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
     getch_();
+}
+
+void exitCommand(int clientSocket) {
+    ByePacket clientPacket;  
+    clientPacket.packetType = BYE;
+    sendByePacket(clientSocket, &clientPacket);
 }

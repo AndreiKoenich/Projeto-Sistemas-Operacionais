@@ -6,11 +6,9 @@
 int getch_();
 void reverseString(char* str);
 
-void sendUploadPacket(int clientSocket, UploadPacket *clientPacket);
 void showUploadPacketClient (UploadPacket clientPacket);
-
-void sendHelloPacket(int clientSocket, HelloPacket *clientPacket);
 void showHelloPacketClient (HelloPacket clientPacket);
+void showByePacketClient (ByePacket clientPacket);
 
 void createRemoteDirectory (char username[], int clientSocket);
 void createClientDirectory(char username[]);

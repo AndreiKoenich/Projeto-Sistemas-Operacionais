@@ -24,4 +24,9 @@ typedef struct {
       
 } HelloPacket; 
 
+typedef struct { 
+    uint16_t packetType;
+      
+} ByePacket; 
+
 #endif

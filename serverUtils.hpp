@@ -10,5 +10,6 @@ void receiveUploadPacket (int clientSocket, string username);
 void showUploadPacketServer (UploadPacket clientPacket);
 string receiveHelloPacket (int clientSocket);
 void showHelloPacketServer (HelloPacket clientPacket);
+void showByePacketServer ();
 
 #endif

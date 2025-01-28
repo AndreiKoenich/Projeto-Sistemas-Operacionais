@@ -35,6 +35,12 @@ void receivePacket (int serverSocket) {
             case UPLOAD:
                 receiveUploadPacket(clientSocket, username);
             break;
+            case BYE:
+                showByePacketServer();
+                close(clientSocket);
+                //close(serverSocket);
+                exit(0);
+            break;
         }
     }
 }
