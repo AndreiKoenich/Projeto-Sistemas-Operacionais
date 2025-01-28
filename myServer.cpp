@@ -36,10 +36,8 @@ void receivePacket (int serverSocket) {
                 receiveUploadPacket(clientSocket, username);
             break;
             case BYE:
-                showByePacketServer();
-                close(clientSocket);
-                //close(serverSocket);
-                exit(0);
+                system("clear");
+                return;
             break;
         }
     }
@@ -54,8 +52,10 @@ void startServerSocket() {
     bind(serverSocket,(struct sockaddr*)&serverAddress, sizeof(serverAddress));
     listen(serverSocket,MAX_SERVER_QUEUE_SIZE);
 
-    cout << "Servidor inicializado com sucesso." << endl << "Escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
-    receivePacket(serverSocket);
+    while (true) {
+        cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
+        receivePacket(serverSocket);
+    }
 
     close(serverSocket);
 }

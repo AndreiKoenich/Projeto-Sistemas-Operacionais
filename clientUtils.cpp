@@ -142,7 +142,6 @@ void showMenu(char *argv[], int clientSocket) {
         else if (command.compare(0, EXIT_COMMAND.length(), EXIT_COMMAND) == 0) {
             exitCommand(clientSocket);
             close(clientSocket);
-            system("clear");
             exit(0);
         }
 
