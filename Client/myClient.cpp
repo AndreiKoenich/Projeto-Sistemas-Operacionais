@@ -29,6 +29,57 @@ int serverConnection(char *argv[]) {
     return clientSocket;
 }
 
+void showMenu(char *argv[], int clientSocket) {
+
+    while(true) {
+        system("clear");
+        cout << "PROJETO DE SISTEMAS OPERACIONAIS II" << endl;
+        cout << "AUTOR: ANDREI POCHMANN KOENICH\n" << endl;
+        cout << "-----------------------------------------------\n" << endl;
+
+        cout << "Conexao com servidor estabelecida com sucesso.\n" << endl;
+        cout << "USUARIO: " << argv[1] << endl;
+        cout << "ENDERECO IP DO SERVIDOR: " << argv[2] << endl;
+        cout << "PORTA DO SERVIDOR: " << argv[3] << endl;
+        cout << "\n-----------------------------------------------\n" << endl;
+
+        cout << "Digite o comando:" << endl;
+        string command;
+        string username(argv[1]);
+        getline(cin, command);
+
+        if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0)
+            uploadCommand(command, clientSocket);
+    
+        else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
+            requestDownloadCommand(username, command, clientSocket);
+
+        /*
+        else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
+            //deleteCommand(command, clientSocket);
+
+        else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
+            //listServerCommand(command, clientSocket); 
+        */
+
+        else if (command.compare(0, LIST_CLIENT_COMMAND.length(), LIST_CLIENT_COMMAND) == 0)
+            listClientCommand(username);
+
+        else if (command.compare(0, HELP_COMMAND.length(), HELP_COMMAND) == 0)
+            helpMenu();
+
+        else if (command.compare(0, EXIT_COMMAND.length(), EXIT_COMMAND) == 0) {
+            exitCommand(clientSocket);
+            exit(0);
+        }
+
+        else {
+            cout << "Comando invalido. Pressione qualquer tecla para continuar." << endl;
+            getch_();
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     if (argc != NUMBER_OF_PARAMETERS+1) {
         cout << "Erro no formato do comando para executar o myClient. Formato correto:" << endl;

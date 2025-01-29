@@ -5,6 +5,7 @@
 
 int getch_();
 void reverseString(char* str);
+string timeToString(time_t rawTime);
 
 void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket);
 void showDownloadPacketClient (DownloadPacket clientPacket);
@@ -15,7 +16,6 @@ void showByePacketClient (ByePacket clientPacket);
 void createRemoteDirectory (char username[], int clientSocket);
 void createClientDirectory(char username[]);
 
-void showMenu(char *argv[], int clientSocket);
 void helpMenu();
 
 #endif

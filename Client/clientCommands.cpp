@@ -1,6 +1,10 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <bits/stdc++.h>
+#include <filesystem>
+#include <sys/stat.h>
+#include <iomanip>
+#include <ctime>
 
 #include "clientConstants.hpp"
 #include "clientPacketSending.hpp"
@@ -74,6 +78,35 @@ void uploadCommand(string command, int clientSocket) {
     free(clientPacket.fileName);
     free(clientPacket.payload);
     cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
+    getch_();
+}
+
+void listClientCommand(string username) {
+
+    namespace fs = std::filesystem;
+    string directoryPath(CLIENT_DIRECTORY_PREFIX);
+    directoryPath += username;
+
+    try {
+        for (const auto& entry : fs::directory_iterator(directoryPath)) {
+            if (fs::is_regular_file(entry.path())) {
+                struct stat fileStat;
+                if (stat(entry.path().c_str(), &fileStat) == 0) {
+                    cout << "\nArquivo: " << entry.path().filename() << "\n";
+                    cout << "  Modification Time (mtime): " << timeToString(fileStat.st_mtime) << "\n";
+                    cout << "  Access Time (atime): " << timeToString(fileStat.st_atime) << "\n";
+                    cout << "  Change Time (ctime): " << timeToString(fileStat.st_ctime) << "\n";
+                    cout << "-----------------------------------------\n";
+                } else {
+                    cerr << "Erro ao obter estatisticas do arquivo: " << entry.path() << "\n";
+                }
+            }
+        }
+    } catch (const exception& e) {
+        cerr << "Erro ao acessar o diretorio: " << e.what() << "\n";
+    }
+
+    cout << "\nPressione qualquer tecla para continuar." << endl;
     getch_();
 }
 
