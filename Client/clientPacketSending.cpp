@@ -79,3 +79,17 @@ void sendByePacket(int clientSocket, ByePacket *clientPacket) {
 
     free(buffer);
 }
+
+void sendRequestListServerPacket (int clientSocket, RequestListServerPacket *clientPacket) {
+
+    uint16_t packetType = htons(clientPacket->packetType);
+
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_REQUEST_LIST_SERVER_PACKET_FIELDS;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+    memcpy(buffer,&packetType,sizeof(packetType));
+    send(clientSocket, buffer, bufferSize, 0);
+
+    showRequestListServerPacketClient(*clientPacket);
+
+    free(buffer);
+}

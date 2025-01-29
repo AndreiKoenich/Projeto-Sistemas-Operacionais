@@ -5,6 +5,7 @@ enum packetType {
     DOWNLOAD,
     DOWNLOAD_ERROR,
     DELETE,
+    REQUEST_LIST_SERVER,
     LIST_SERVER,
     BYE
 };

@@ -66,6 +66,26 @@ void receiveDownloadPacket(int clientSocket, string username) {
     getch_();
 }
 
+void receiveListServerPacket(int clientSocket) {
+
+    ListServerPacket clientPacket;
+    uint16_t payloadLength;
+
+    clientPacket.packetType = LIST_SERVER;
+
+    recv(clientSocket, &payloadLength, sizeof(payloadLength), 0);
+    clientPacket.payloadLength = ntohs(payloadLength);
+
+    clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
+    recv(clientSocket, clientPacket.payload, payloadLength, 0);
+
+    showListServerPacketClient(clientPacket);
+    free(clientPacket.payload);
+
+    cout << "Pressione qualquer tecla para continuar." << endl;
+    getch_();
+}
+
 void receivePacketFromServer (int clientSocket, string username) {
 
     uint16_t packetType;
@@ -81,6 +101,9 @@ void receivePacketFromServer (int clientSocket, string username) {
             cout << "Erro ao tentar fazer download do arquivo no servidor." << endl;
             cout << "Pressione qualquer tecla para continuar." << endl;
             getch_();
+        break;
+        case LIST_SERVER:
+            receiveListServerPacket(clientSocket);
         break;
     }
 }

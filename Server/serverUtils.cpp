@@ -11,6 +11,14 @@
 
 using namespace std;
 
+string timeToString(time_t rawTime) {
+    struct tm timeInfo;
+    localtime_r(&rawTime, &timeInfo);
+    char buffer[20];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeInfo);
+    return string(buffer);
+}
+
 void createServerDirectory() {
     struct stat st = {0};
     if (stat(SERVER_DIRECTORY_NAME, &st) == -1) 
@@ -81,3 +89,13 @@ void showDownloadErrorPacketServer() {
     cout << "Tipo:" << DOWNLOAD_ERROR << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
+
+void showListServerPacket(ListServerPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote list server enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
+    cout << "Conteudo:" << clientPacket.payload << endl;
+    cout << "-----------------------------------------------\n" << endl;   
+}
+

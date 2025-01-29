@@ -81,6 +81,14 @@ void uploadCommand(string command, int clientSocket) {
     getch_();
 }
 
+void requestListServerCommand(string username, int clientSocket) {
+
+    RequestListServerPacket clientPacket;
+    clientPacket.packetType = REQUEST_LIST_SERVER;
+    sendRequestListServerPacket(clientSocket, &clientPacket);
+    receivePacketFromServer(clientSocket, username);
+}
+
 void listClientCommand(string username) {
 
     namespace fs = std::filesystem;

@@ -10,6 +10,7 @@ void showMenu(char *argv[], int clientSocket);
 void requestDownloadCommand(string username, string command, int clientSocket);
 void uploadCommand(string command, int clientSocket);
 void listClientCommand(string username);
+void requestListServerCommand(string username, int clientSocket);
 void exitCommand(int clientSocket);
 void deleteCommand (string username, string command);
 

@@ -38,6 +38,9 @@ void receivePacketFromClient (int serverSocket) {
             case UPLOAD:
                 receiveUploadPacket(clientSocket, username);
             break;
+            case REQUEST_LIST_SERVER:
+                receiveRequestListServerPacket(clientSocket, username);
+            break;
             case BYE:
                 system("clear");
                 return;

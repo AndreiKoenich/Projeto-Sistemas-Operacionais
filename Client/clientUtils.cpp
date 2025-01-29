@@ -97,6 +97,22 @@ void showByePacketClient (ByePacket clientPacket) {
     cout << "-----------------------------------------------\n" << endl;
 }
 
+void showRequestListServerPacketClient(RequestListServerPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote request list server enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "-----------------------------------------------\n" << endl;    
+}
+
+void showListServerPacketClient(ListServerPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote list server recebido com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
+    cout << "Conteudo:" << clientPacket.payload << endl;
+    cout << "-----------------------------------------------\n" << endl;    
+}
+
 void createRemoteDirectory (char username[], int clientSocket) {
     HelloPacket clientPacket;
     clientPacket.packetType = HELLO;

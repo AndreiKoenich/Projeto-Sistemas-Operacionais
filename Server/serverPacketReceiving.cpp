@@ -4,6 +4,10 @@
 #include <cstring>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <filesystem>
+#include <sstream>  
+#include <iomanip>
+#include <ctime>
 
 #include "packetStruct.hpp"
 #include "packetEnum.hpp"
@@ -96,6 +100,53 @@ void receiveRequestDownloadPacket(int clientSocket, string username) {
     free(usernameStr);
     free(clientPacket.fileName);
     free(clientPacket.payload);
+}
+
+void receiveRequestListServerPacket(int clientSocket, string username) {
+    ListServerPacket clientPacket;
+    clientPacket.packetType = LIST_SERVER;
+
+    char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
+    username.copy(usernameStr,username.length());
+    usernameStr[username.length()] = '\0';
+
+    char clientDirectoryName[FULL_DIRECTORY_NAME_SIZE];
+    memset(clientDirectoryName,0,sizeof(clientDirectoryName));
+    getcwd(clientDirectoryName,FULL_DIRECTORY_NAME_SIZE);
+    strcat(clientDirectoryName,CLIENT_DIRECTORY_NAME);
+    strcat(clientDirectoryName,usernameStr);
+
+    namespace fs = std::filesystem;
+    stringstream payload;
+
+    try {
+        for (const auto& entry : fs::directory_iterator(clientDirectoryName)) {
+            if (fs::is_regular_file(entry.path())) {
+                struct stat fileStat;
+                if (stat(entry.path().c_str(), &fileStat) == 0) {
+                    payload << "\nArquivo: " << entry.path().filename() << "\n";
+                    payload << "  Modification Time (mtime): " << timeToString(fileStat.st_mtime) << "\n";
+                    payload << "  Access Time (atime): " << timeToString(fileStat.st_atime) << "\n";
+                    payload << "  Change Time (ctime): " << timeToString(fileStat.st_ctime) << "\n";
+                    payload << "-----------------------------------------\n";
+                } else {
+                    payload << "Erro ao obter estatisticas do arquivo: " << entry.path() << "\n";
+                }
+            }
+        }
+    } catch (const exception& e) {
+        cerr << "Erro ao acessar o diretorio: " << e.what() << "\n";
+    }
+
+    clientPacket.payloadLength = payload.str().length()+1;
+    clientPacket.payload = (char*)calloc(sizeof(char), clientPacket.payloadLength);
+    payload.str().copy(clientPacket.payload,clientPacket.payloadLength-1);
+    clientPacket.payload[clientPacket.payloadLength-1] = '\0';
+
+    sendListServerPacket(clientSocket, &clientPacket);
+
+    free(clientPacket.payload);
+    free(usernameStr);
 }
 
 void receiveUploadPacket (int clientSocket, string username) {

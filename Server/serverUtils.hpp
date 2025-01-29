@@ -4,6 +4,7 @@
 #include "packetStruct.hpp"
 using namespace std;
 
+string timeToString(time_t rawTime);
 void createServerDirectory();
 void createClientDirectory(char username[]);
 void receiveUploadPacket (int clientSocket, string username);
@@ -13,5 +14,6 @@ void showDownloadErrorPacketServer();
 string receiveHelloPacket (int clientSocket);
 void showHelloPacketServer (HelloPacket clientPacket);
 void showByePacketServer ();
+void showListServerPacket(ListServerPacket clientPacket);
 
 #endif

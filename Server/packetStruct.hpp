@@ -42,6 +42,19 @@ typedef struct {
 
 typedef struct { 
     uint16_t packetType;
+      
+} RequestListServerPacket; 
+
+typedef struct { 
+    uint16_t packetType;
+
+    uint16_t payloadLength;
+    char* payload; 
+      
+} ListServerPacket; 
+
+typedef struct { 
+    uint16_t packetType;
 
     uint16_t usernameLength;
     char* username; 

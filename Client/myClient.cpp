@@ -58,9 +58,8 @@ void showMenu(char *argv[], int clientSocket) {
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
             deleteCommand(username, command);
 
-        //else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
-            //listServerCommand(command, clientSocket); 
-        
+        else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
+            requestListServerCommand(username, clientSocket); 
 
         else if (command.compare(0, LIST_CLIENT_COMMAND.length(), LIST_CLIENT_COMMAND) == 0)
             listClientCommand(username);
