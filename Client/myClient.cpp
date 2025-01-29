@@ -54,13 +54,13 @@ void showMenu(char *argv[], int clientSocket) {
         else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
             requestDownloadCommand(username, command, clientSocket);
 
-        /*
+        
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
-            //deleteCommand(command, clientSocket);
+            deleteCommand(username, command);
 
-        else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
+        //else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
             //listServerCommand(command, clientSocket); 
-        */
+        
 
         else if (command.compare(0, LIST_CLIENT_COMMAND.length(), LIST_CLIENT_COMMAND) == 0)
             listClientCommand(username);

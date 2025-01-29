@@ -11,5 +11,6 @@ void requestDownloadCommand(string username, string command, int clientSocket);
 void uploadCommand(string command, int clientSocket);
 void listClientCommand(string username);
 void exitCommand(int clientSocket);
+void deleteCommand (string username, string command);
 
 #endif

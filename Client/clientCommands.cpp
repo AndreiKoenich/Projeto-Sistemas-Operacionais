@@ -110,6 +110,28 @@ void listClientCommand(string username) {
     getch_();
 }
 
+void deleteCommand (string username, string command) {
+    string directoryPath(CLIENT_DIRECTORY_PREFIX);
+    directoryPath += username;
+    string fileName = command.substr(DELETE_COMMAND.length(), command.length() - DELETE_COMMAND.length());
+    directoryPath += ("/" + fileName);
+
+    char* directoryPathStr = (char*)calloc(sizeof(char), directoryPath.length()+1);
+    directoryPath.copy(directoryPathStr,directoryPath.length());
+    directoryPathStr[directoryPath.length()] = '\0';
+
+    if (remove(directoryPathStr) != 0)
+        cerr << "Erro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
+
+    else
+        cout << "\nArquivo" << directoryPath << " removido com sucesso." << endl;
+
+    free(directoryPathStr);
+
+    cout << "\nPressione qualquer tecla para continuar." << endl;
+    getch_();
+}
+
 void exitCommand(int clientSocket) {
     ByePacket clientPacket;  
     clientPacket.packetType = BYE;
