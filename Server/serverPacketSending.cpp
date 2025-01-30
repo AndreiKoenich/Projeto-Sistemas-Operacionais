@@ -7,7 +7,7 @@
 #include "serverUtils.hpp"
 
 void sendDownloadPacket(int clientSocket, DownloadPacket *clientPacket) {
-
+    
     uint16_t packetType = htons(clientPacket->packetType);
     uint16_t payloadLength = htons(clientPacket->payloadLength);
     uint16_t fileNameLength = htons(clientPacket->fileNameLength);

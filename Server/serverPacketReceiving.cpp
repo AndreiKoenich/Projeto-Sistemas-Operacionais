@@ -87,8 +87,8 @@ void receiveRequestDownloadPacket(int clientSocket, string username) {
 	uint16_t fileLength=ftell(selectedFile);
 	fseek(selectedFile, 0, SEEK_SET);
 
-    clientPacket.payloadLength = fileLength;
-	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
+    clientPacket.payloadLength = fileLength+1;
+	clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) 
         cout << "Erro na leitura do arquivo nao-sincronizado, ao utilizar o comando download, para armazenar os dados em buffer." << endl;
