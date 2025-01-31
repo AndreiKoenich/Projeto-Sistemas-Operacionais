@@ -143,6 +143,21 @@ void createClientDirectory(char username[]) {
         }     
 }
 
+void getClientDirectoryPath (string username, char *filePath) {
+
+    memset(filePath,0,sizeof(filePath));
+    getcwd(filePath,FULL_DIRECTORY_NAME_SIZE);
+    strcat(filePath,"/");
+    strcat(filePath,CLIENT_DIRECTORY_PREFIX);
+
+    char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
+    username.copy(usernameStr,username.length());
+    usernameStr[username.length()] = '\0';
+    strcat(filePath,usernameStr);
+    strcat(filePath,"/");
+
+}
+
 void helpMenu() {
     system("clear");
     cout << "LISTA DE COMANDOS:" << endl;

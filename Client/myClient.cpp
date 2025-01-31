@@ -10,6 +10,7 @@
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
 #include "clientUtils.hpp"
+#include "inotifyClient.hpp"
 
 using namespace std;
 
@@ -53,7 +54,6 @@ void showMenu(char *argv[], int clientSocket) {
     
         else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
             requestDownloadCommand(username, command, clientSocket);
-
         
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
             deleteCommand(username, command);
@@ -80,15 +80,20 @@ void showMenu(char *argv[], int clientSocket) {
 }
 
 int main(int argc, char *argv[]) {
+
     if (argc != NUMBER_OF_PARAMETERS+1) {
         cout << "Erro no formato do comando para executar o myClient. Formato correto:" << endl;
         cout << "./myClient <username> <server_ip_address> <port>" << endl;
         return 1;
     }
 
+    pthread_t inotifyThread, menuThread;
+
     createClientDirectory(argv[1]);
     int clientSocket = serverConnection(argv);
     createRemoteDirectory(argv[1], clientSocket);
+    monitorClientDirectory(string(argv[1]));
+
     showMenu(argv, clientSocket);
 
     close(clientSocket);

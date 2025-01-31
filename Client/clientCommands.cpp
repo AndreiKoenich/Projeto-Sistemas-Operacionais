@@ -132,7 +132,7 @@ void deleteCommand (string username, string command) {
         cerr << "Erro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
 
     else
-        cout << "\nArquivo" << directoryPath << " removido com sucesso." << endl;
+        cout << "\nArquivo " << directoryPath << " removido com sucesso." << endl;
 
     free(directoryPathStr);
 

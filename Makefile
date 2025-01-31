@@ -11,7 +11,8 @@ CLIENT_SRC := Client/myClient.cpp \
               Client/clientCommands.cpp \
               Client/clientUtils.cpp \
               Client/clientPacketSending.cpp \
-              Client/clientPacketReceiving.cpp
+              Client/clientPacketReceiving.cpp \
+              Client/inotifyClient.cpp
 
 SERVER_SRC := Server/myServer.cpp \
               Server/serverUtils.cpp \
