@@ -17,7 +17,6 @@ void showListServerPacketClient(ListServerPacket clientPacket);
 
 void createRemoteDirectory (char username[], int clientSocket);
 void createClientDirectory(char username[]);
-void getClientDirectoryPath (string username, char *filePath);
 
 void helpMenu();
 

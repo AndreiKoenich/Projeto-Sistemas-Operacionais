@@ -87,8 +87,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    pthread_t inotifyThread, menuThread;
-
     createClientDirectory(argv[1]);
     int clientSocket = serverConnection(argv);
     createRemoteDirectory(argv[1], clientSocket);

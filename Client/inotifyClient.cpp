@@ -12,10 +12,19 @@ using namespace std;
 #define EVENT_SIZE  (sizeof(struct inotify_event))
 #define BUF_LEN     (1024 * (EVENT_SIZE + NAME_MAX + 1))
 
-void* monitorClientDirectory (string username) {
+void monitorClientDirectory (string username) {
 
     char clientDirectory[FULL_DIRECTORY_NAME_SIZE];
-    getClientDirectoryPath(username, clientDirectory);
+    memset(clientDirectory,0,sizeof(clientDirectory));
+    getcwd(clientDirectory,FULL_DIRECTORY_NAME_SIZE);
+    strcat(clientDirectory,"/");
+    strcat(clientDirectory,CLIENT_DIRECTORY_PREFIX);
+
+    char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
+    username.copy(usernameStr,username.length());
+    usernameStr[username.length()] = '\0';
+    strcat(clientDirectory,usernameStr);
+    strcat(clientDirectory,"/");
 
     int inotify_fd = inotify_init();
     if (inotify_fd < 0) {
