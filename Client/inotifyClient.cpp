@@ -12,7 +12,9 @@ using namespace std;
 #define EVENT_SIZE  (sizeof(struct inotify_event))
 #define BUF_LEN     (1024 * (EVENT_SIZE + NAME_MAX + 1))
 
-void monitorClientDirectory (string username) {
+void* monitorClientDirectory (void* usernamePtr) {
+
+    string username((char*)usernamePtr);
 
     char clientDirectory[FULL_DIRECTORY_NAME_SIZE];
     memset(clientDirectory,0,sizeof(clientDirectory));
@@ -29,14 +31,14 @@ void monitorClientDirectory (string username) {
     int inotify_fd = inotify_init();
     if (inotify_fd < 0) {
         cerr << "Erro ao inicializar inotify." << endl;
-        return;
+        return NULL;
     }
 
     int watch_descriptor = inotify_add_watch(inotify_fd, clientDirectory, IN_MODIFY | IN_CREATE | IN_DELETE);
     if (watch_descriptor < 0) {
         cerr << "Erro ao adicionar watch ao diretorio." << endl;
         close(inotify_fd);
-        return;
+        return NULL;
     }
 
     char buffer[BUF_LEN];
@@ -67,4 +69,6 @@ void monitorClientDirectory (string username) {
 
     inotify_rm_watch(inotify_fd, watch_descriptor);
     close(inotify_fd);
+
+    return NULL;
 }

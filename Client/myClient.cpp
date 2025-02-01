@@ -11,6 +11,7 @@
 #include "clientCommands.hpp"
 #include "clientUtils.hpp"
 #include "inotifyClient.hpp"
+#include "clientStruct.hpp"
 
 using namespace std;
 
@@ -30,36 +31,39 @@ int serverConnection(char *argv[]) {
     return clientSocket;
 }
 
-void showMenu(char *argv[], int clientSocket) {
+void* showMenu(void* parameters) {
+
+    clientStruct *menuParameters;
+    menuParameters = (clientStruct*) parameters;
 
     while(true) {
-        system("clear");
+        //system("clear");
         cout << "PROJETO DE SISTEMAS OPERACIONAIS II" << endl;
         cout << "AUTOR: ANDREI POCHMANN KOENICH\n" << endl;
         cout << "-----------------------------------------------\n" << endl;
 
         cout << "Conexao com servidor estabelecida com sucesso.\n" << endl;
-        cout << "USUARIO: " << argv[1] << endl;
-        cout << "ENDERECO IP DO SERVIDOR: " << argv[2] << endl;
-        cout << "PORTA DO SERVIDOR: " << argv[3] << endl;
+        cout << "USUARIO: " << menuParameters->username << endl;
+        cout << "ENDERECO IP DO SERVIDOR: " << menuParameters->address << endl;
+        cout << "PORTA DO SERVIDOR: " << menuParameters->port << endl;
         cout << "\n-----------------------------------------------\n" << endl;
 
         cout << "Digite o comando:" << endl;
         string command;
-        string username(argv[1]);
+        string username(menuParameters->username);
         getline(cin, command);
 
         if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0)
-            uploadCommand(command, clientSocket);
+            uploadCommand(command, menuParameters->clientSocket);
     
         else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
-            requestDownloadCommand(username, command, clientSocket);
+            requestDownloadCommand(username, command, menuParameters->clientSocket);
         
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
             deleteCommand(username, command);
 
         else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
-            requestListServerCommand(username, clientSocket); 
+            requestListServerCommand(username, menuParameters->clientSocket); 
 
         else if (command.compare(0, LIST_CLIENT_COMMAND.length(), LIST_CLIENT_COMMAND) == 0)
             listClientCommand(username);
@@ -68,7 +72,7 @@ void showMenu(char *argv[], int clientSocket) {
             helpMenu();
 
         else if (command.compare(0, EXIT_COMMAND.length(), EXIT_COMMAND) == 0) {
-            exitCommand(clientSocket);
+            exitCommand(menuParameters->clientSocket);
             exit(0);
         }
 
@@ -77,9 +81,13 @@ void showMenu(char *argv[], int clientSocket) {
             getch_();
         }
     }
+
+    return NULL;
 }
 
 int main(int argc, char *argv[]) {
+
+    pthread_t inotifyThread, menuThread;
 
     if (argc != NUMBER_OF_PARAMETERS+1) {
         cout << "Erro no formato do comando para executar o myClient. Formato correto:" << endl;
@@ -90,9 +98,18 @@ int main(int argc, char *argv[]) {
     createClientDirectory(argv[1]);
     int clientSocket = serverConnection(argv);
     createRemoteDirectory(argv[1], clientSocket);
-    monitorClientDirectory(string(argv[1]));
 
-    showMenu(argv, clientSocket);
+    clientStruct menuParameters;
+    menuParameters.clientSocket = clientSocket;
+    menuParameters.username = argv[1];
+    menuParameters.address = argv[2];
+    menuParameters.port = argv[3];
+
+    pthread_create(&inotifyThread,NULL,monitorClientDirectory, menuParameters.username);
+    pthread_create(&menuThread,NULL,showMenu, (void*) &menuParameters);
+
+    pthread_join(inotifyThread,NULL);
+    pthread_join(menuThread,NULL);
 
     close(clientSocket);
     return 0;

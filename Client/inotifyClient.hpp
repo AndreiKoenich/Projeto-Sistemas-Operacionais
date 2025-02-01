@@ -3,6 +3,6 @@
 
 #include <cstring>
 
-void* monitorClientDirectory (string username);
+void* monitorClientDirectory (void* username);
 
 #endif
