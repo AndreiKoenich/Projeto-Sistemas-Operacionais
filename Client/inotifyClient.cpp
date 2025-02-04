@@ -12,6 +12,15 @@ using namespace std;
 #define EVENT_SIZE  (sizeof(struct inotify_event))
 #define BUF_LEN     (1024 * (EVENT_SIZE + NAME_MAX + 1))
 
+bool isTemporaryFile(const string filename) {
+
+    //cout << "Nome do arquivo sendo monitorado: " << filename << endl;
+    if (filename.front() == '~' || filename.front() == '.')
+        return true;
+    else
+        return false;
+}
+
 void* monitorClientDirectory (void* usernamePtr) {
 
     string username((char*)usernamePtr);
@@ -27,6 +36,7 @@ void* monitorClientDirectory (void* usernamePtr) {
     usernameStr[username.length()] = '\0';
     strcat(clientDirectory,usernameStr);
     strcat(clientDirectory,"/");
+    free(usernameStr);
 
     int inotify_fd = inotify_init();
     if (inotify_fd < 0) {
@@ -34,15 +44,16 @@ void* monitorClientDirectory (void* usernamePtr) {
         return NULL;
     }
 
-    int watch_descriptor = inotify_add_watch(inotify_fd, clientDirectory, IN_MODIFY | IN_CREATE | IN_DELETE);
+    int watch_descriptor = inotify_add_watch(inotify_fd, clientDirectory, IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE);
+    
     if (watch_descriptor < 0) {
-        cerr << "Erro ao adicionar watch ao diretorio." << endl;
+        cerr << "Erro ao adicionar watch ao diretório." << endl;
         close(inotify_fd);
         return NULL;
     }
 
     char buffer[BUF_LEN];
-    cout << "Monitorando o diretorio: " << clientDirectory << endl;
+    cout << "Monitorando o diretório: " << clientDirectory << endl;
 
     while (true) {
         int length = read(inotify_fd, buffer, BUF_LEN);
@@ -55,12 +66,14 @@ void* monitorClientDirectory (void* usernamePtr) {
             struct inotify_event *event = (struct inotify_event *) &buffer[i];
             if (event->len) {
                 string filename = event->name;
-                if (event->mask & IN_CREATE) {
-                    cout << "Arquivo " << filename << " foi criado." << endl;
-                } else if (event->mask & IN_MODIFY) {
-                    cout << "Arquivo " << filename << " foi modificado." << endl;
-                } else if (event->mask & IN_DELETE) {
-                    cout << "Arquivo " << filename << " foi deletado." << endl;
+                if (!isTemporaryFile(filename))
+                {
+                    if (event->mask & IN_CLOSE_WRITE)
+                        cout << "Arquivo " << filename << " foi modificado." << endl;
+                    else if (event->mask & IN_MOVED_FROM)
+                        cout << "Arquivo " << filename << " foi movido para fora do diretorio." << endl;
+                    else if (event->mask & IN_MOVED_TO)
+                        cout << "Arquivo " << filename << " foi movido para dentro do diretorio." << endl;
                 }
             }
             i += EVENT_SIZE + event->len;
