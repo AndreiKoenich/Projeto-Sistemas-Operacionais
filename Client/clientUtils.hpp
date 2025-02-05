@@ -14,6 +14,7 @@ void showHelloPacketClient (HelloPacket clientPacket);
 void showByePacketClient (ByePacket clientPacket);
 void showRequestListServerPacketClient(RequestListServerPacket clientPacket);
 void showListServerPacketClient(ListServerPacket clientPacket);
+void showRequestDeletePacketClient(RequestDeletePacket clientPacket);
 
 void createRemoteDirectory (char username[], int clientSocket);
 void createClientDirectory(char username[]);

@@ -1,8 +1,11 @@
 #ifndef INOTIFYCLIENT_HPP
 #define INOTIFYCLIENT_HPP
 
-#include <cstring>
+#include "clientStruct.hpp"
 
-void* monitorClientDirectory (void* username);
+void deleteInotify(string fileName, int clientSocket);
+void uploadInotify(string fileName, string username, int clientSocket);
+bool isTemporaryFile(const string filename);
+void* monitorClientDirectory (void* menuParameters);
 
 #endif

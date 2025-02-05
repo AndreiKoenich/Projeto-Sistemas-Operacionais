@@ -60,8 +60,13 @@ void showUploadPacketServer (UploadPacket clientPacket) {
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
-    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
-    cout << "Conteudo:" << clientPacket.payload << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl; 
+
+    if (clientPacket.payloadLength != 0)      
+        cout << "Conteudo:" << clientPacket.payload << endl;
+    else
+        cout << "O conteudo do pacote esta vazio." << endl;
+        
     cout << "-----------------------------------------------\n" << endl;
 }
 

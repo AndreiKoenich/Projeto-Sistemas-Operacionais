@@ -150,6 +150,8 @@ void receiveRequestListServerPacket(int clientSocket, string username) {
 }
 
 void receiveUploadPacket (int clientSocket, string username) {
+
+    //cout << "Iniciando upload pelo servidor..." << endl;
     UploadPacket clientPacket;
     uint16_t payloadLength;
     uint16_t fileNameLength;
@@ -165,8 +167,10 @@ void receiveUploadPacket (int clientSocket, string username) {
     recv(clientSocket, &payloadLength, sizeof(payloadLength), 0);
     clientPacket.payloadLength = ntohs(payloadLength);
 
-    clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
-    recv(clientSocket, clientPacket.payload, payloadLength, 0);
+    if (clientPacket.payloadLength != 0) {
+        clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
+        recv(clientSocket, clientPacket.payload, payloadLength, 0);
+    }
 
     showUploadPacketServer(clientPacket);
 
@@ -188,7 +192,7 @@ void receiveUploadPacket (int clientSocket, string username) {
         exit(1);
     }
 
-    if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
+    if(clientPacket.payloadLength != 0 && fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
         cout << "Erro na escrita do arquivo, ao utilizar o comando upload." << endl;
         exit(1);
     }
@@ -197,4 +201,37 @@ void receiveUploadPacket (int clientSocket, string username) {
     free(usernameStr);
     free(clientPacket.fileName);
     free(clientPacket.payload);
+}
+
+void receiveRequestDeletePacket(int clientSocket, string username) {
+    RequestDeletePacket clientPacket;
+    uint16_t fileNameLength;
+
+    clientPacket.packetType = DELETE_INOTIFY;
+
+    recv(clientSocket, &fileNameLength, sizeof(fileNameLength), 0);
+    clientPacket.fileNameLength = ntohs(fileNameLength);
+
+    clientPacket.fileName =(char*)calloc(clientPacket.fileNameLength,sizeof(char));
+    recv(clientSocket, clientPacket.fileName, clientPacket.fileNameLength, 0);
+
+    char filePath[FULL_DIRECTORY_NAME_SIZE];
+    memset(filePath,0,sizeof(filePath));
+    getcwd(filePath,FULL_DIRECTORY_NAME_SIZE);
+    strcat(filePath,CLIENT_DIRECTORY_NAME);
+
+    char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
+    username.copy(usernameStr,username.length());
+    usernameStr[username.length()] = '\0';
+    strcat(filePath,usernameStr);
+    strcat(filePath,"//");
+    strcat(filePath,clientPacket.fileName);
+
+    if (remove(filePath) != 0)
+        cerr << "Erro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao do Inotify." << endl;
+    else
+        cout << "\nArquivo " << filePath << " removido com sucesso." << endl;
+
+    free(usernameStr);
+    free(clientPacket.fileName);
 }

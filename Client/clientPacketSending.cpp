@@ -93,3 +93,20 @@ void sendRequestListServerPacket (int clientSocket, RequestListServerPacket *cli
 
     free(buffer);
 }
+
+void sendRequestDeletePacket(int clientSocket, RequestDeletePacket *clientPacket) {
+    uint16_t packetType = htons(clientPacket->packetType);
+    uint16_t fileNameLength = htons(clientPacket->fileNameLength);
+
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_DELETE_INOTIFY_PACKET_FIELDS + clientPacket->fileNameLength;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+    memcpy(buffer,&packetType,sizeof(packetType));
+    memcpy(buffer+sizeof(packetType),&fileNameLength, sizeof(clientPacket->fileNameLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
+
+    send(clientSocket, buffer, bufferSize, 0);
+
+    showRequestDeletePacketClient(*clientPacket);
+
+    free(buffer); 
+}

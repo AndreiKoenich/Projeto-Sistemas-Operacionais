@@ -66,7 +66,10 @@ void showDownloadPacketClient (DownloadPacket clientPacket) {
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
-    cout << "Conteudo:" << clientPacket.payload << endl;
+    if (clientPacket.payloadLength != 0)      
+        cout << "Conteudo:" << clientPacket.payload << endl;
+    else
+        cout << "O conteudo do pacote esta vazio." << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 
@@ -77,7 +80,10 @@ void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
-    cout << "Conteudo:" << clientPacket.payload << endl;
+    if (clientPacket.payloadLength != 0)      
+        cout << "Conteudo:" << clientPacket.payload << endl;
+    else
+        cout << "O conteudo do pacote esta vazio." << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 
@@ -111,6 +117,15 @@ void showListServerPacketClient(ListServerPacket clientPacket) {
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
     cout << "Conteudo:" << clientPacket.payload << endl;
     cout << "-----------------------------------------------\n" << endl;    
+}
+
+void showRequestDeletePacketClient(RequestDeletePacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote de requisicao de delete enviado com sucesso.\n" << endl;
+    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
+    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
+    cout << "-----------------------------------------------\n" << endl;   
 }
 
 void createRemoteDirectory (char username[], int clientSocket) {

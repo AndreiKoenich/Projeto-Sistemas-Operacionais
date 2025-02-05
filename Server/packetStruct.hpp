@@ -55,6 +55,14 @@ typedef struct {
 
 typedef struct { 
     uint16_t packetType;
+    
+    uint16_t fileNameLength;
+    char * fileName;
+      
+} RequestDeletePacket;
+
+typedef struct { 
+    uint16_t packetType;
 
     uint16_t usernameLength;
     char* username; 

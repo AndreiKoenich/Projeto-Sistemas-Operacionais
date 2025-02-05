@@ -21,7 +21,6 @@ void receivePacketFromClient (int serverSocket) {
     cout << "Nova conexao aceita com sucesso." << endl;
 
     string username("");
-
     uint16_t packetType;
 
     while (true) {
@@ -38,8 +37,14 @@ void receivePacketFromClient (int serverSocket) {
             case UPLOAD:
                 receiveUploadPacket(clientSocket, username);
             break;
+            case UPLOAD_INOTIFY:
+                receiveUploadPacket(clientSocket, username);
+            break;
             case REQUEST_LIST_SERVER:
                 receiveRequestListServerPacket(clientSocket, username);
+            break;
+            case DELETE_INOTIFY:
+                receiveRequestDeletePacket(clientSocket, username);
             break;
             case BYE:
                 system("clear");

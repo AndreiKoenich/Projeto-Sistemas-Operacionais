@@ -1,11 +1,12 @@
 #include <iostream>
 #include <sys/socket.h>
-#include <netinet/ip.h> 
+#include <netinet/ip.h>
 #include <cstring>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <curses.h>
+#include <csignal>
 
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
@@ -15,8 +16,21 @@
 
 using namespace std;
 
+int clientSocketGlobal;
+pthread_t menuThread;
+pthread_t inotifyThread;
+
+void signalHandler(int signal) {
+    if (signal == SIGINT) {
+        exitCommand(clientSocketGlobal); 
+        pthread_cancel(inotifyThread);
+        pthread_cancel(menuThread);
+        exit(0);
+    }
+}
+
 int serverConnection(char *argv[]) {
-    int clientSocket = socket(AF_INET,SOCK_STREAM,0);
+    int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = inet_addr(argv[2]);
@@ -27,17 +41,16 @@ int serverConnection(char *argv[]) {
         close(clientSocket);
         exit(1);
     }
-    
+
     return clientSocket;
 }
 
 void* showMenu(void* parameters) {
-
     clientStruct *menuParameters;
     menuParameters = (clientStruct*) parameters;
 
-    while(true) {
-        //system("clear");
+    while (true) {
+        system("clear");
         cout << "PROJETO DE SISTEMAS OPERACIONAIS II" << endl;
         cout << "AUTOR: ANDREI POCHMANN KOENICH\n" << endl;
         cout << "-----------------------------------------------\n" << endl;
@@ -55,15 +68,15 @@ void* showMenu(void* parameters) {
 
         if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0)
             uploadCommand(command, menuParameters->clientSocket);
-    
+
         else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
             requestDownloadCommand(username, command, menuParameters->clientSocket);
-        
+
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
             deleteCommand(username, command);
 
         else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
-            requestListServerCommand(username, menuParameters->clientSocket); 
+            requestListServerCommand(username, menuParameters->clientSocket);
 
         else if (command.compare(0, LIST_CLIENT_COMMAND.length(), LIST_CLIENT_COMMAND) == 0)
             listClientCommand(username);
@@ -73,9 +86,11 @@ void* showMenu(void* parameters) {
 
         else if (command.compare(0, EXIT_COMMAND.length(), EXIT_COMMAND) == 0) {
             exitCommand(menuParameters->clientSocket);
+            pthread_cancel(inotifyThread);
+            pthread_cancel(menuThread);
             exit(0);
         }
-
+            
         else {
             cout << "Comando invalido. Pressione qualquer tecla para continuar." << endl;
             getch_();
@@ -87,17 +102,18 @@ void* showMenu(void* parameters) {
 
 int main(int argc, char *argv[]) {
 
-    pthread_t inotifyThread, menuThread;
-
     if (argc != NUMBER_OF_PARAMETERS+1) {
         cout << "Erro no formato do comando para executar o myClient. Formato correto:" << endl;
         cout << "./myClient <username> <server_ip_address> <port>" << endl;
-        return 1;
+        exit(1);
     }
 
     createClientDirectory(argv[1]);
     int clientSocket = serverConnection(argv);
+    clientSocketGlobal = clientSocket;
     createRemoteDirectory(argv[1], clientSocket);
+
+    signal(SIGINT, signalHandler);
 
     clientStruct menuParameters;
     menuParameters.clientSocket = clientSocket;
@@ -105,11 +121,11 @@ int main(int argc, char *argv[]) {
     menuParameters.address = argv[2];
     menuParameters.port = argv[3];
 
-    pthread_create(&inotifyThread,NULL,monitorClientDirectory, menuParameters.username);
-    pthread_create(&menuThread,NULL,showMenu, (void*) &menuParameters);
+    pthread_create(&inotifyThread, NULL, monitorClientDirectory, (void*)&menuParameters);
+    pthread_create(&menuThread, NULL, showMenu, (void*)&menuParameters);
 
-    pthread_join(inotifyThread,NULL);
-    pthread_join(menuThread,NULL);
+    pthread_join(inotifyThread, NULL);
+    pthread_join(menuThread, NULL);
 
     close(clientSocket);
     return 0;

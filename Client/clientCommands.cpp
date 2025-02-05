@@ -71,7 +71,8 @@ void uploadCommand(string command, int clientSocket) {
         return;
     }
 
-    clientPacket.payload[fileLength-1] = '\0';
+    if (fileLength != 0)
+        clientPacket.payload[fileLength-1] = '\0';
 
     fclose(selectedFile);
     sendUploadPacket(clientSocket, &clientPacket);
@@ -130,7 +131,6 @@ void deleteCommand (string username, string command) {
 
     if (remove(directoryPathStr) != 0)
         cerr << "Erro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
-
     else
         cout << "\nArquivo " << directoryPath << " removido com sucesso." << endl;
 
@@ -138,6 +138,21 @@ void deleteCommand (string username, string command) {
 
     cout << "\nPressione qualquer tecla para continuar." << endl;
     getch_();
+}
+
+void deleteInotify(string username, string fileName, int clientSocket) {
+
+    RequestDeletePacket clientPacket;
+    clientPacket.packetType = DELETE_INOTIFY;
+    clientPacket.fileNameLength = fileName.length()+1;
+    clientPacket.fileName = (char*)calloc(clientPacket.fileNameLength,sizeof(char));
+    fileName.copy(clientPacket.fileName,clientPacket.fileNameLength-1);
+    clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
+
+    sendRequestDeletePacket(clientSocket, &clientPacket);
+    cout << "Comando de requisicao de delete executado com sucesso." << endl;
+
+    free(clientPacket.fileName);
 }
 
 void exitCommand(int clientSocket) {
