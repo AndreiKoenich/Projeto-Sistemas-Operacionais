@@ -16,13 +16,13 @@
 
 using namespace std;
 
-int clientSocketGlobal;
+int clientSocket;
 pthread_t menuThread;
 pthread_t inotifyThread;
 
 void signalHandler(int signal) {
     if (signal == SIGINT) {
-        exitCommand(clientSocketGlobal); 
+        exitCommand(clientSocket); 
         pthread_cancel(inotifyThread);
         pthread_cancel(menuThread);
         exit(0);
@@ -30,7 +30,7 @@ void signalHandler(int signal) {
 }
 
 int serverConnection(char *argv[]) {
-    int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = inet_addr(argv[2]);
@@ -110,7 +110,6 @@ int main(int argc, char *argv[]) {
 
     createClientDirectory(argv[1]);
     int clientSocket = serverConnection(argv);
-    clientSocketGlobal = clientSocket;
     createRemoteDirectory(argv[1], clientSocket);
 
     signal(SIGINT, signalHandler);
