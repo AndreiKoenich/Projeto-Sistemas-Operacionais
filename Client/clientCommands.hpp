@@ -7,12 +7,12 @@ using namespace std;
 
 void createRemoteDirectory (char username[], int clientsocket);
 void helpMenu();
-void requestDownloadCommand(string username, string command, clientStruct *menuParameters);
-void uploadCommand(string command, int clientSocket);
-void listClientCommand(string username);
-void requestListServerCommand(string username, int clientSocket);
+void requestDownloadCommand(string command, clientStruct *menuParameters);
+void uploadCommand(string command, clientStruct *menuParameters);
+void listClientCommand(clientStruct *menuParameters);
+void requestListServerCommand(clientStruct *menuParameters);
 void exitCommand(int clientSocket);
-void deleteCommand (string username, string command);
+void deleteCommand (string command, clientStruct *menuParameters);
 void deleteInotify(string username, string fileName, int clientSocket);
 
 #endif

@@ -14,10 +14,11 @@
 #include "packetEnum.hpp"
 #include "clientStruct.hpp"
 
-void requestDownloadCommand(string username, string command, clientStruct *menuParameters) {
+void requestDownloadCommand(string command, clientStruct *menuParameters) {
 
     pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
 
+    string username(menuParameters->username);
     string fileName = command.substr(DOWNLOAD_COMMAND.length(), command.length() - DOWNLOAD_COMMAND.length());
 
     RequestDownloadPacket clientPacket;
@@ -36,7 +37,7 @@ void requestDownloadCommand(string username, string command, clientStruct *menuP
     pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
 }
 
-void uploadCommand(string command, int clientSocket) {
+void uploadCommand(string command, clientStruct *menuParameters) {
 
     string filePath = command.substr(UPLOAD_COMMAND.length(), command.length() - UPLOAD_COMMAND.length());
 
@@ -80,23 +81,25 @@ void uploadCommand(string command, int clientSocket) {
         clientPacket.payload[fileLength-1] = '\0';
 
     fclose(selectedFile);
-    sendUploadPacket(clientSocket, &clientPacket);
+    sendUploadPacket(menuParameters->clientSocket, &clientPacket);
     free(clientPacket.fileName);
     free(clientPacket.payload);
     cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
     getch_();
 }
 
-void requestListServerCommand(string username, int clientSocket) {
+void requestListServerCommand(clientStruct *menuParameters) {
 
+    string username(menuParameters->username);
     RequestListServerPacket clientPacket;
     clientPacket.packetType = REQUEST_LIST_SERVER;
-    sendRequestListServerPacket(clientSocket, &clientPacket);
-    receivePacketFromServer(clientSocket, username);
+    sendRequestListServerPacket(menuParameters->clientSocket, &clientPacket);
+    receivePacketFromServer(menuParameters->clientSocket, username);
 }
 
-void listClientCommand(string username) {
+void listClientCommand(clientStruct *menuParameters) {
 
+    string username(menuParameters->username);
     namespace fs = std::filesystem;
     string directoryPath(CLIENT_DIRECTORY_PREFIX);
     directoryPath += username;
@@ -124,7 +127,9 @@ void listClientCommand(string username) {
     getch_();
 }
 
-void deleteCommand (string username, string command) {
+void deleteCommand (string command, clientStruct *menuParameters) {
+
+    string username(menuParameters->username);
     string directoryPath(CLIENT_DIRECTORY_PREFIX);
     directoryPath += username;
     string fileName = command.substr(DELETE_COMMAND.length(), command.length() - DELETE_COMMAND.length());

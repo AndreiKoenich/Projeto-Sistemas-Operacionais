@@ -63,23 +63,22 @@ void* showMenu(void* parameters) {
 
         cout << "Digite o comando:" << endl;
         string command;
-        string username(menuParameters->username);
         getline(cin, command);
 
         if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0)
-            uploadCommand(command, menuParameters->clientSocket);
+            uploadCommand(command, menuParameters);
 
         else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0) 
-            requestDownloadCommand(username, command, menuParameters);
+            requestDownloadCommand(command, menuParameters);
 
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
-            deleteCommand(username, command);
+            deleteCommand(command, menuParameters);
 
         else if (command.compare(0, LIST_SERVER_COMMAND.length(), LIST_SERVER_COMMAND) == 0)
-            requestListServerCommand(username, menuParameters->clientSocket);
+            requestListServerCommand(menuParameters);
 
         else if (command.compare(0, LIST_CLIENT_COMMAND.length(), LIST_CLIENT_COMMAND) == 0)
-            listClientCommand(username);
+            listClientCommand(menuParameters);
 
         else if (command.compare(0, HELP_COMMAND.length(), HELP_COMMAND) == 0)
             helpMenu();
