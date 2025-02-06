@@ -46,8 +46,8 @@ int serverConnection(char *argv[]) {
 }
 
 void* showMenu(void* parameters) {
-    clientStruct *menuParameters;
-    menuParameters = (clientStruct*) parameters;
+
+    clientStruct *menuParameters = (clientStruct*) parameters;
 
     while (true) {
         system("clear");
@@ -69,8 +69,8 @@ void* showMenu(void* parameters) {
         if (command.compare(0, UPLOAD_COMMAND.length(), UPLOAD_COMMAND) == 0)
             uploadCommand(command, menuParameters->clientSocket);
 
-        else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0)
-            requestDownloadCommand(username, command, menuParameters->clientSocket);
+        else if (command.compare(0, DOWNLOAD_COMMAND.length(), DOWNLOAD_COMMAND) == 0) 
+            requestDownloadCommand(username, command, menuParameters);
 
         else if (command.compare(0, DELETE_COMMAND.length(), DELETE_COMMAND) == 0)
             deleteCommand(username, command);
@@ -119,6 +119,7 @@ int main(int argc, char *argv[]) {
     menuParameters.username = argv[1];
     menuParameters.address = argv[2];
     menuParameters.port = argv[3];
+    menuParameters.mutexDownloadUpload = PTHREAD_MUTEX_INITIALIZER;
 
     pthread_create(&inotifyThread, NULL, monitorClientDirectory, (void*)&menuParameters);
     pthread_create(&menuThread, NULL, showMenu, (void*)&menuParameters);

@@ -3,8 +3,8 @@
 
 #include "clientStruct.hpp"
 
-void deleteInotify(string fileName, int clientSocket);
-void uploadInotify(string fileName, string username, int clientSocket);
+void uploadInotify(string fileName, clientStruct *menuParameters);
+void deleteInotify(string fileName, clientStruct *menuParameters);
 bool isTemporaryFile(const string filename);
 void* monitorClientDirectory (void* menuParameters);
 

@@ -12,8 +12,11 @@
 #include "clientUtils.hpp"
 #include "packetStruct.hpp"
 #include "packetEnum.hpp"
+#include "clientStruct.hpp"
 
-void requestDownloadCommand(string username, string command, int clientSocket) {
+void requestDownloadCommand(string username, string command, clientStruct *menuParameters) {
+
+    pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
 
     string fileName = command.substr(DOWNLOAD_COMMAND.length(), command.length() - DOWNLOAD_COMMAND.length());
 
@@ -24,11 +27,13 @@ void requestDownloadCommand(string username, string command, int clientSocket) {
     fileName.copy(clientPacket.fileName,clientPacket.fileNameLength-1);
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
-    sendRequestDownloadPacket(clientSocket, &clientPacket);
+    sendRequestDownloadPacket(menuParameters->clientSocket, &clientPacket);
     cout << "Comando de requisicao de download executado com sucesso." << endl;
-    receivePacketFromServer(clientSocket, username);
+    receivePacketFromServer(menuParameters->clientSocket, username);
 
     free(clientPacket.fileName);
+
+    pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
 }
 
 void uploadCommand(string command, int clientSocket) {

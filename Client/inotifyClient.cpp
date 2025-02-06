@@ -16,7 +16,9 @@ using namespace std;
 #define EVENT_SIZE  (sizeof(struct inotify_event))
 #define BUF_LEN     (1024 * (EVENT_SIZE + NAME_MAX + 1))
 
-void uploadInotify(string fileName, string username, int clientSocket)  {
+void uploadInotify(string fileName, clientStruct *menuParameters)  {
+
+    pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
 
     UploadPacket clientPacket; 
 
@@ -25,11 +27,7 @@ void uploadInotify(string fileName, string username, int clientSocket)  {
     getcwd(filePath,FULL_DIRECTORY_NAME_SIZE);
     strcat(filePath,"/");
     strcat(filePath,CLIENT_DIRECTORY_PREFIX);
-
-    char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
-    username.copy(usernameStr,username.length());
-    usernameStr[username.length()] = '\0';
-    strcat(filePath,usernameStr);
+    strcat(filePath,menuParameters->username);
     strcat(filePath,"/");
     strcat(filePath,fileName.c_str());
 
@@ -73,13 +71,14 @@ void uploadInotify(string fileName, string username, int clientSocket)  {
         clientPacket.payload[fileLength-1] = '\0';
 
     fclose(selectedFile);
-    sendUploadPacket(clientSocket, &clientPacket);
-    free(usernameStr);
+    sendUploadPacket(menuParameters->clientSocket, &clientPacket);
     free(clientPacket.fileName);
     free(clientPacket.payload);
+
+    pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
 }
 
-void deleteInotify(string fileName, int clientSocket) {
+void deleteInotify(string fileName, clientStruct *menuParameters)  {
 
     RequestDeletePacket clientPacket;
     clientPacket.packetType = DELETE_INOTIFY;
@@ -88,7 +87,7 @@ void deleteInotify(string fileName, int clientSocket) {
     fileName.copy(clientPacket.fileName,clientPacket.fileNameLength-1);
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
-    sendRequestDeletePacket(clientSocket, &clientPacket);
+    sendRequestDeletePacket(menuParameters->clientSocket, &clientPacket);
     cout << "Comando de requisicao de delete executado com sucesso." << endl;
 
     free(clientPacket.fileName);
@@ -100,8 +99,7 @@ bool isTemporaryFile(const string fileName) {
 
 void* monitorClientDirectory (void* parameters) {
 
-    clientStruct *menuParameters;
-    menuParameters = (clientStruct*) parameters;
+    clientStruct *menuParameters = (clientStruct*) parameters;
 
     string username((char*)menuParameters->username);
 
@@ -158,7 +156,7 @@ void* monitorClientDirectory (void* parameters) {
                                     modificationFlag = true;
                                 else {
                                     cout << "Arquivo " << fileName << " foi movido para dentro do diretorio." << endl;
-                                    uploadInotify(fileName, menuParameters->username, menuParameters->clientSocket);
+                                    uploadInotify(fileName, menuParameters);
 
                                 }     
                             }
@@ -169,13 +167,13 @@ void* monitorClientDirectory (void* parameters) {
                                 if (modificationFlag == true) {
                                     cout << "Arquivo " << fileName << " foi modificado." << endl;
                                     modificationFlag = false;
-                                    uploadInotify(fileName, menuParameters->username, menuParameters->clientSocket);
+                                    uploadInotify(fileName, menuParameters);
                                 }   
                             }
 
                             else if (event->mask & IN_MOVED_FROM) {
                                 cout << "Arquivo " << fileName << " foi movido para fora do diretorio." << endl;
-                                deleteInotify(fileName, menuParameters->clientSocket);
+                                deleteInotify(fileName, menuParameters);
                             }
                                     
                         

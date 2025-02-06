@@ -1,8 +1,6 @@
 #ifndef CLIENTSTRUCT_HPP
 #define CLIENTSTRUCT_HPP
 
-#include <stdint.h>
-
 using namespace std;
 
 typedef struct { 
@@ -10,6 +8,7 @@ typedef struct {
     char* username;
     char* address;
     char* port;
+    pthread_mutex_t mutexDownloadUpload;
       
 } clientStruct;
 
