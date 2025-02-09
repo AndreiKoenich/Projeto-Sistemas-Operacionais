@@ -31,6 +31,9 @@ void receiveDownloadPacket(int clientSocket, string username) {
     memset(filePath,0,sizeof(filePath));
     getcwd(filePath,FULL_DIRECTORY_NAME_SIZE);
     strcat(filePath,"/");
+    strcat(filePath,clientPacket.fileName);
+
+    /*
     strcat(filePath,CLIENT_DIRECTORY_PREFIX);
 
     char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
@@ -39,6 +42,7 @@ void receiveDownloadPacket(int clientSocket, string username) {
     strcat(filePath,usernameStr);
     strcat(filePath,"/");
     strcat(filePath,clientPacket.fileName);
+    */
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
@@ -52,7 +56,7 @@ void receiveDownloadPacket(int clientSocket, string username) {
     }
 
     fclose(selectedFile);
-    free(usernameStr);
+    //free(usernameStr);
     free(clientPacket.fileName);
     free(clientPacket.payload);
 

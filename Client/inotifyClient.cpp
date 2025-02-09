@@ -29,7 +29,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
     strcat(filePath,"/");
     strcat(filePath,fileName.c_str());
 
-    cout << "Arquivo selecionado pelo Inotify: " << filePath << endl;
+    //cout << "Arquivo selecionado pelo Inotify: " << filePath << endl;
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "rb")) == NULL) {
