@@ -1,18 +1,11 @@
 #include <iostream>
-#include <sys/socket.h>
-#include <netinet/ip.h>
-#include <cstring>
 #include <arpa/inet.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <curses.h>
 #include <csignal>
 
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
 #include "clientUtils.hpp"
 #include "inotifyClient.hpp"
-#include "clientStruct.hpp"
 
 using namespace std;
 

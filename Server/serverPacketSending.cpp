@@ -1,5 +1,3 @@
-#include <iostream>
-#include <sys/socket.h>
 #include <bits/stdc++.h>
 #include <netinet/in.h>
 
@@ -23,7 +21,7 @@ void sendDownloadPacket(int clientSocket, DownloadPacket *clientPacket) {
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    showDownloadPacketServer(*clientPacket);
+    //showDownloadPacketServer(*clientPacket);
 
     free(buffer);
 }
@@ -36,7 +34,7 @@ void sendDownloadErrorPacket(int clientSocket, DownloadErrorPacket *clientPacket
 
     memcpy(buffer,&packetType,sizeof(packetType));
     send(clientSocket, buffer, bufferSize, 0);
-    showDownloadErrorPacketServer();
+    //showDownloadErrorPacketServer();
     free(buffer);
 }
 
@@ -53,6 +51,6 @@ void sendListServerPacket(int clientSocket, ListServerPacket *clientPacket) {
     memcpy(buffer+sizeof(packetType)+sizeof(payloadLength), clientPacket->payload, clientPacket->payloadLength);
     
     send(clientSocket, buffer, bufferSize, 0);
-    showListServerPacket(*clientPacket);
+    //showListServerPacket(*clientPacket);
     free(buffer);
 }

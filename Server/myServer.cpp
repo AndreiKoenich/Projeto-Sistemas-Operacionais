@@ -1,29 +1,27 @@
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/ip.h> 
 #include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <cstring>
+#include <bits/stdc++.h>
 
 #include "serverConstants.hpp"
-#include "packetStruct.hpp"
 #include "packetEnum.hpp"
 #include "serverUtils.hpp"
 #include "serverPacketReceiving.hpp"
+#include "serverThreadStruct.hpp"
 
 using namespace std;
 
-void receivePacketFromClient (int serverSocket) {
+pthread_t *clientThreads;
 
-    int clientSocket = accept(serverSocket, nullptr, nullptr);
-    cout << "Nova conexao aceita com sucesso." << endl;
+void* receivePacketFromClient (void* threadInfo) {
+
+    int clientSocket = ((serverThreadStruct*) threadInfo)->clientSocket;
+    int threadNumber = ((serverThreadStruct*) threadInfo)->threadNumber;
+    delete (serverThreadStruct*) threadInfo;
 
     string username("");
     uint16_t packetType;
 
     while (true) {
+
         recv(clientSocket, &packetType, sizeof(packetType), 0);
         packetType = ntohs(packetType);
 
@@ -47,10 +45,40 @@ void receivePacketFromClient (int serverSocket) {
                 receiveRequestDeletePacket(clientSocket, username);
             break;
             case BYE:
-                system("clear");
-                return;
+                //showByePacketServer(username);
+                close(clientSocket);
+                pthread_cancel(clientThreads[threadNumber-1]);
             break;
         }
+    }
+
+    return NULL;
+}
+
+void serverLoop (int serverSocket) {
+
+    int threadNumber = 0;
+    clientThreads = (pthread_t*) malloc(sizeof(pthread_t));
+
+    while (true) {
+
+        int clientSocket = accept(serverSocket, nullptr, nullptr);
+
+        system("clear");
+        threadNumber++;
+
+        cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
+        cout << "Nova conexao aceita com sucesso. Numero de conexoes aceitas ate o momento: " << threadNumber << endl;
+
+        clientThreads = (pthread_t*) realloc(clientThreads,threadNumber*sizeof(pthread_t));
+
+        serverThreadStruct threadStruct;
+        threadStruct.clientSocket = clientSocket;
+        threadStruct.threadNumber = threadNumber;
+
+        serverThreadStruct *threadStructPtr = new serverThreadStruct (threadStruct);
+
+        pthread_create(&clientThreads[threadNumber-1], NULL, receivePacketFromClient, (void*) threadStructPtr);
     }
 }
 
@@ -63,11 +91,8 @@ void startServerSocket() {
     bind(serverSocket,(struct sockaddr*)&serverAddress, sizeof(serverAddress));
     listen(serverSocket,MAX_SERVER_QUEUE_SIZE);
 
-    while (true) {
-        cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
-        receivePacketFromClient(serverSocket);
-    }
-
+    cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
+    serverLoop(serverSocket);
     close(serverSocket);
 }
 

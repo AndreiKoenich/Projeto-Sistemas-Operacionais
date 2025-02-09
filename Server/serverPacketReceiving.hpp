@@ -9,5 +9,4 @@ void receiveUploadPacket (int clientSocket, string username);
 void receiveRequestListServerPacket(int clientSocket, string username);
 void receiveRequestDeletePacket(int clientSocket, string username);
 
-
 #endif

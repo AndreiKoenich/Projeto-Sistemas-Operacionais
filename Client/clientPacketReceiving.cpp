@@ -1,15 +1,10 @@
 #include <iostream>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <cstring>
-#include <sys/socket.h>
 #include <arpa/inet.h>
 
 #include "clientConstants.hpp"
-#include "clientCommands.hpp"
 #include "clientUtils.hpp"
 #include "packetEnum.hpp"
-#include "packetStruct.hpp"
 
 void receiveDownloadPacket(int clientSocket, string username) {
     DownloadPacket clientPacket;
@@ -30,7 +25,7 @@ void receiveDownloadPacket(int clientSocket, string username) {
     clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
     recv(clientSocket, clientPacket.payload, payloadLength, 0);
 
-    showDownloadPacketClient(clientPacket);
+    //showDownloadPacketClient(clientPacket);
 
     char filePath[FULL_DIRECTORY_NAME_SIZE];
     memset(filePath,0,sizeof(filePath));
@@ -79,7 +74,9 @@ void receiveListServerPacket(int clientSocket) {
     clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
     recv(clientSocket, clientPacket.payload, payloadLength, 0);
 
-    showListServerPacketClient(clientPacket);
+    cout << clientPacket.payload << endl;
+
+    //showListServerPacketClient(clientPacket);
     free(clientPacket.payload);
 
     cout << "Pressione qualquer tecla para continuar." << endl;

@@ -52,7 +52,7 @@ string timeToString(time_t rawTime) {
 
 void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote de requisicao de download enviado com sucesso.\n" << endl;
+    cout << "Pacote de requisicao de DOWNLOAD enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
@@ -61,7 +61,7 @@ void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket) {
 
 void showDownloadPacketClient (DownloadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote download recebido com sucesso.\n" << endl;
+    cout << "Pacote DOWNLOAD recebido com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
@@ -75,7 +75,7 @@ void showDownloadPacketClient (DownloadPacket clientPacket) {
 
 void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote upload enviado com sucesso.\n" << endl;
+    cout << "Pacote UPLOAD enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
@@ -89,7 +89,7 @@ void showUploadPacketClient (UploadPacket clientPacket) {
 
 void showHelloPacketClient (HelloPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote hello enviado com sucesso.\n" << endl;
+    cout << "Pacote HELLO enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do usuario:" << clientPacket.usernameLength << endl;
     cout << "Conteudo:" << clientPacket.username << endl;
@@ -98,21 +98,21 @@ void showHelloPacketClient (HelloPacket clientPacket) {
 
 void showByePacketClient (ByePacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote bye enviado com sucesso.\n" << endl;
+    cout << "Pacote BYE enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 
 void showRequestListServerPacketClient(RequestListServerPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote request list server enviado com sucesso.\n" << endl;
+    cout << "Pacote de REQUEST LIST SERVER enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "-----------------------------------------------\n" << endl;    
 }
 
 void showListServerPacketClient(ListServerPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote list server recebido com sucesso.\n" << endl;
+    cout << "Pacote LIST SERVER recebido com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
     cout << "Conteudo:" << clientPacket.payload << endl;
@@ -121,7 +121,7 @@ void showListServerPacketClient(ListServerPacket clientPacket) {
 
 void showRequestDeletePacketClient(RequestDeletePacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote de requisicao de delete enviado com sucesso.\n" << endl;
+    cout << "Pacote de requisicao de DELETE enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;

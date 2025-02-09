@@ -1,16 +1,11 @@
-#include <iostream>
 #include <sys/socket.h>
 #include <bits/stdc++.h>
-#include <filesystem>
 #include <sys/stat.h>
-#include <iomanip>
-#include <ctime>
 
 #include "clientConstants.hpp"
 #include "clientPacketSending.hpp"
 #include "clientPacketReceiving.hpp"
 #include "clientUtils.hpp"
-#include "packetStruct.hpp"
 #include "packetEnum.hpp"
 #include "clientStruct.hpp"
 
@@ -29,7 +24,6 @@ void requestDownloadCommand(string command, clientStruct *menuParameters) {
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
     sendRequestDownloadPacket(menuParameters->clientSocket, &clientPacket);
-    cout << "Comando de requisicao de download executado com sucesso." << endl;
     receivePacketFromServer(menuParameters->clientSocket, username);
 
     free(clientPacket.fileName);
@@ -38,6 +32,8 @@ void requestDownloadCommand(string command, clientStruct *menuParameters) {
 }
 
 void uploadCommand(string command, clientStruct *menuParameters) {
+
+    pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
 
     string filePath = command.substr(UPLOAD_COMMAND.length(), command.length() - UPLOAD_COMMAND.length());
 
@@ -84,6 +80,9 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     sendUploadPacket(menuParameters->clientSocket, &clientPacket);
     free(clientPacket.fileName);
     free(clientPacket.payload);
+
+    pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
+
     cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
     getch_();
 }

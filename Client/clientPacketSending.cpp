@@ -7,6 +7,7 @@
 #include "packetEnum.hpp"
 #include "packetStruct.hpp"
 
+
 void sendRequestDownloadPacket(int clientSocket, RequestDownloadPacket *clientPacket) {
     uint16_t packetType = htons(clientPacket->packetType);
     uint16_t fileNameLength = htons(clientPacket->fileNameLength);
@@ -19,7 +20,7 @@ void sendRequestDownloadPacket(int clientSocket, RequestDownloadPacket *clientPa
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    showRequestDownloadPacketClient(*clientPacket);
+    //showRequestDownloadPacketClient(*clientPacket);
 
     free(buffer); 
 }
@@ -41,7 +42,7 @@ void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    showUploadPacketClient(*clientPacket);
+    //showUploadPacketClient(*clientPacket);
 
     free(buffer);
 }
@@ -60,7 +61,7 @@ void sendHelloPacket(int clientSocket, HelloPacket *clientPacket) {
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    showHelloPacketClient(*clientPacket);
+    //showHelloPacketClient(*clientPacket);
 
     free(buffer);
 }
@@ -75,7 +76,7 @@ void sendByePacket(int clientSocket, ByePacket *clientPacket) {
     memcpy(buffer,&packetType,sizeof(packetType));
     send(clientSocket, buffer, bufferSize, 0);
 
-    showByePacketClient(*clientPacket);
+    //showByePacketClient(*clientPacket);
 
     free(buffer);
 }
@@ -89,7 +90,7 @@ void sendRequestListServerPacket (int clientSocket, RequestListServerPacket *cli
     memcpy(buffer,&packetType,sizeof(packetType));
     send(clientSocket, buffer, bufferSize, 0);
 
-    showRequestListServerPacketClient(*clientPacket);
+    //showRequestListServerPacketClient(*clientPacket);
 
     free(buffer);
 }
@@ -106,7 +107,7 @@ void sendRequestDeletePacket(int clientSocket, RequestDeletePacket *clientPacket
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    showRequestDeletePacketClient(*clientPacket);
+    //showRequestDeletePacketClient(*clientPacket);
 
     free(buffer); 
 }

@@ -47,7 +47,7 @@ void createClientDirectory(char username[]) {
 
 void showHelloPacketServer (HelloPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote hello recebido com sucesso.\n" << endl;
+    cout << "Pacote HELLO recebido com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do usuario:" << clientPacket.usernameLength << endl;
     cout << "Conteudo:" << clientPacket.username << endl;
@@ -56,7 +56,7 @@ void showHelloPacketServer (HelloPacket clientPacket) {
 
 void showUploadPacketServer (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote upload recebido com sucesso.\n" << endl;
+    cout << "Pacote UPLOAD recebido com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
@@ -72,7 +72,7 @@ void showUploadPacketServer (UploadPacket clientPacket) {
 
 void showDownloadPacketServer (DownloadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote download enviado com sucesso.\n" << endl;
+    cout << "Pacote DOWNLOAD enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
@@ -81,23 +81,23 @@ void showDownloadPacketServer (DownloadPacket clientPacket) {
     cout << "-----------------------------------------------\n" << endl;
 }
 
-void showByePacketServer () {
+void showByePacketServer (string username) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote bye recebido com sucesso.\n" << endl;
+    cout << "Pacote BYE do usuario "<< username <<" recebido com sucesso.\n" << endl;
     cout << "Tipo:" << BYE << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 
 void showDownloadErrorPacketServer() {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote de erro de download enviado com sucesso.\n" << endl;
+    cout << "Pacote de erro de DOWNLOAD enviado com sucesso.\n" << endl;
     cout << "Tipo:" << DOWNLOAD_ERROR << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 
 void showListServerPacket(ListServerPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote list server enviado com sucesso.\n" << endl;
+    cout << "Pacote LIST SERVER enviado com sucesso.\n" << endl;
     cout << "Tipo:" << clientPacket.packetType << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
     cout << "Conteudo:" << clientPacket.payload << endl;

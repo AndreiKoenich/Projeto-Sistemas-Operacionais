@@ -2,14 +2,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <cstring>
-#include <sys/socket.h>
 #include <arpa/inet.h>
 #include <filesystem>
-#include <sstream>  
-#include <iomanip>
-#include <ctime>
 
-#include "packetStruct.hpp"
 #include "packetEnum.hpp"
 #include "serverConstants.hpp"
 #include "serverUtils.hpp"
@@ -27,7 +22,7 @@ string receiveHelloPacket (int clientSocket) {
     clientPacket.username =(char*)calloc(clientPacket.usernameLength,sizeof(char));
     recv(clientSocket, clientPacket.username, usernameLength, 0);
 
-    showHelloPacketServer(clientPacket);
+    //showHelloPacketServer(clientPacket);
 
     char clientDirectoryName[FULL_DIRECTORY_NAME_SIZE];
     memset(clientDirectoryName,0,sizeof(clientDirectoryName));
@@ -172,7 +167,7 @@ void receiveUploadPacket (int clientSocket, string username) {
         recv(clientSocket, clientPacket.payload, payloadLength, 0);
     }
 
-    showUploadPacketServer(clientPacket);
+    //showUploadPacketServer(clientPacket);
 
     char filePath[FULL_DIRECTORY_NAME_SIZE];
     memset(filePath,0,sizeof(filePath));

@@ -1,12 +1,10 @@
 #include <iostream>
-#include <cstring>
 #include <sys/inotify.h>
 #include <unistd.h>
 #include <limits.h>
 
 #include "clientConstants.hpp"
 #include "clientUtils.hpp"
-#include "clientCommands.hpp"
 #include "packetEnum.hpp"
 #include "clientPacketSending.hpp"
 #include "clientStruct.hpp"

@@ -13,7 +13,7 @@ void showDownloadPacketServer (DownloadPacket clientPacket);
 void showDownloadErrorPacketServer();
 string receiveHelloPacket (int clientSocket);
 void showHelloPacketServer (HelloPacket clientPacket);
-void showByePacketServer ();
+void showByePacketServer (string username);
 void showListServerPacket(ListServerPacket clientPacket);
 
 #endif

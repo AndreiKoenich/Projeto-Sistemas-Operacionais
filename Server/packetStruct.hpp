@@ -1,8 +1,6 @@
 #ifndef PACKETSTRUCT_HPP
 #define PACKETSTRUCT_HPP
 
-#include <stdint.h>
-
 using namespace std;
 
 typedef struct { 
