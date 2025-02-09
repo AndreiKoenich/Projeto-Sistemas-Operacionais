@@ -225,7 +225,7 @@ void receiveRequestDeletePacket(int clientSocket, string username) {
     if (remove(filePath) != 0)
         cerr << "Erro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao do Inotify." << endl;
     else
-        cout << "\nArquivo " << filePath << " removido com sucesso." << endl;
+        //cout << "\nArquivo " << filePath << " removido com sucesso." << endl;
 
     free(usernameStr);
     free(clientPacket.fileName);
