@@ -33,17 +33,6 @@ void receiveDownloadPacket(int clientSocket, string username) {
     strcat(filePath,"/");
     strcat(filePath,clientPacket.fileName);
 
-    /*
-    strcat(filePath,CLIENT_DIRECTORY_PREFIX);
-
-    char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
-    username.copy(usernameStr,username.length());
-    usernameStr[username.length()] = '\0';
-    strcat(filePath,usernameStr);
-    strcat(filePath,"/");
-    strcat(filePath,clientPacket.fileName);
-    */
-
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
         cout << "Erro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
@@ -56,7 +45,6 @@ void receiveDownloadPacket(int clientSocket, string username) {
     }
 
     fclose(selectedFile);
-    //free(usernameStr);
     free(clientPacket.fileName);
     free(clientPacket.payload);
 

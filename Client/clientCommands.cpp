@@ -11,8 +11,6 @@
 
 void requestDownloadCommand(string command, clientStruct *menuParameters) {
 
-    pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
-
     string username(menuParameters->username);
     string fileName = command.substr(DOWNLOAD_COMMAND.length(), command.length() - DOWNLOAD_COMMAND.length());
 
@@ -27,13 +25,9 @@ void requestDownloadCommand(string command, clientStruct *menuParameters) {
     receivePacketFromServer(menuParameters->clientSocket, username);
 
     free(clientPacket.fileName);
-
-    pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
 }
 
 void uploadCommand(string command, clientStruct *menuParameters) {
-
-    pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
 
     string filePath = command.substr(UPLOAD_COMMAND.length(), command.length() - UPLOAD_COMMAND.length());
 
@@ -80,8 +74,6 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     sendUploadPacket(menuParameters->clientSocket, &clientPacket);
     free(clientPacket.fileName);
     free(clientPacket.payload);
-
-    pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
 
     cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
     getch_();

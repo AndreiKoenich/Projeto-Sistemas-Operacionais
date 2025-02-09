@@ -16,7 +16,7 @@ using namespace std;
 
 void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
-    pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
+    //pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
 
     UploadPacket clientPacket; 
 
@@ -73,7 +73,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
-    pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
+    //pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
 }
 
 void deleteInotify(string fileName, clientStruct *menuParameters)  {
