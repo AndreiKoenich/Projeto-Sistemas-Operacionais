@@ -86,7 +86,7 @@ void deleteInotify(string fileName, clientStruct *menuParameters)  {
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
     sendRequestDeletePacket(menuParameters->clientSocket, &clientPacket);
-    cout << "Comando de requisicao de delete executado com sucesso." << endl;
+    //cout << "Comando de requisicao de delete executado com sucesso." << endl;
 
     free(clientPacket.fileName);
 }
@@ -129,7 +129,7 @@ void* monitorClientDirectory (void* parameters) {
     }
 
     char buffer[BUF_LEN];
-    cout << "Monitorando o diretório: " << clientDirectory << endl;
+    //cout << "Monitorando o diretório: " << clientDirectory << endl;
 
     string fileName, lastModifiedFile;
     bool modificationFlag = false;
@@ -153,7 +153,7 @@ void* monitorClientDirectory (void* parameters) {
                                 if (lastModifiedFile == fileName) 
                                     modificationFlag = true;
                                 else {
-                                    cout << "Arquivo " << fileName << " foi movido para dentro do diretorio." << endl;
+                                    //cout << "Arquivo " << fileName << " foi movido para dentro do diretorio." << endl;
                                     uploadInotify(fileName, menuParameters);
 
                                 }     
@@ -163,14 +163,14 @@ void* monitorClientDirectory (void* parameters) {
                                 lastModifiedFile = fileName;
 
                                 if (modificationFlag == true) {
-                                    cout << "Arquivo " << fileName << " foi modificado." << endl;
+                                    //cout << "Arquivo " << fileName << " foi modificado." << endl;
                                     modificationFlag = false;
                                     uploadInotify(fileName, menuParameters);
                                 }   
                             }
 
                             else if (event->mask & IN_MOVED_FROM) {
-                                cout << "Arquivo " << fileName << " foi movido para fora do diretorio." << endl;
+                                //cout << "Arquivo " << fileName << " foi movido para fora do diretorio." << endl;
                                 deleteInotify(fileName, menuParameters);
                             }
                                     
