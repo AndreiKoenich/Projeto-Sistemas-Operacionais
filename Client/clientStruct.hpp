@@ -8,7 +8,6 @@ typedef struct {
     char* username;
     char* address;
     char* port;
-    //pthread_mutex_t mutexDownloadUpload;
       
 } clientStruct;
 

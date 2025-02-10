@@ -1,5 +1,8 @@
 #include <arpa/inet.h>
 #include <bits/stdc++.h>
+#include <list>
+#include <iterator>
+#include <iostream>
 
 #include "serverConstants.hpp"
 #include "packetEnum.hpp"
@@ -11,43 +14,79 @@ using namespace std;
 
 pthread_t *clientThreads;
 
+list<serverThreadStruct> onlineClients;
+pthread_mutex_t clientListMutex = PTHREAD_MUTEX_INITIALIZER;
+
+void addNewClientInList (serverThreadStruct *clientInfo) {
+
+    pthread_mutex_lock(&clientListMutex);
+
+    list<serverThreadStruct>::iterator it;
+
+    for (it = onlineClients.begin(); it != onlineClients.end(); it++)
+        if (it->username == clientInfo->username)
+            clientInfo->deviceNumber++;
+
+    onlineClients.push_back(*clientInfo);
+
+    pthread_mutex_unlock(&clientListMutex);
+}
+
+void removeClientFromList (serverThreadStruct *clientInfo) {
+
+    pthread_mutex_lock(&clientListMutex);
+
+    list<serverThreadStruct>::iterator it;
+
+    for (it = onlineClients.begin(); it != onlineClients.end(); it++)
+        if (it->username == clientInfo->username && it->deviceNumber == clientInfo->deviceNumber) {
+            it = onlineClients.erase(it);
+            break;
+        }
+
+    close(clientInfo->clientSocket);
+    pthread_cancel(clientThreads[clientInfo->threadNumber-1]);
+            
+    pthread_mutex_unlock(&clientListMutex);
+}
+
 void* receivePacketFromClient (void* threadInfo) {
 
-    int clientSocket = ((serverThreadStruct*) threadInfo)->clientSocket;
-    int threadNumber = ((serverThreadStruct*) threadInfo)->threadNumber;
+    serverThreadStruct clientInfo;
+    clientInfo.clientSocket = ((serverThreadStruct*) threadInfo)->clientSocket;
+    clientInfo.threadNumber = ((serverThreadStruct*) threadInfo)->threadNumber;
     delete (serverThreadStruct*) threadInfo;
 
-    string username("");
     uint16_t packetType;
 
     while (true) {
 
-        recv(clientSocket, &packetType, sizeof(packetType), 0);
+        recv(clientInfo.clientSocket, &packetType, sizeof(packetType), 0);
         packetType = ntohs(packetType);
 
         switch (packetType) {
             case HELLO:
-                username = receiveHelloPacket(clientSocket);
+                clientInfo.username = receiveHelloPacket(clientInfo.clientSocket);
+                addNewClientInList(&clientInfo);
             break;
             case REQUEST_DOWNLOAD:
-                receiveRequestDownloadPacket(clientSocket, username);
+                receiveRequestDownloadPacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case UPLOAD:
-                receiveUploadPacket(clientSocket, username);
+                receiveUploadPacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case UPLOAD_INOTIFY:
-                receiveUploadPacket(clientSocket, username);
+                receiveUploadPacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case REQUEST_LIST_SERVER:
-                receiveRequestListServerPacket(clientSocket, username);
+                receiveRequestListServerPacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case DELETE_INOTIFY:
-                receiveRequestDeletePacket(clientSocket, username);
+                receiveRequestDeletePacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case BYE:
-                //showByePacketServer(username);
-                close(clientSocket);
-                pthread_cancel(clientThreads[threadNumber-1]);
+                //showByePacketServer(clientInfo.username);
+                removeClientFromList(&clientInfo);
             break;
         }
     }

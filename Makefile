@@ -17,7 +17,8 @@ CLIENT_SRC := Client/myClient.cpp \
 SERVER_SRC := Server/myServer.cpp \
               Server/serverUtils.cpp \
               Server/serverPacketReceiving.cpp \
-              Server/serverPacketSending.cpp
+              Server/serverPacketSending.cpp \
+              Server/serverPacketPropagation.cpp
 
 # Comando para linkar os arquivos compilados e gerar o executável
 link: 

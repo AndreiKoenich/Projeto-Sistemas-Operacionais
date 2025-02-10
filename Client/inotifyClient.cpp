@@ -14,9 +14,11 @@ using namespace std;
 #define EVENT_SIZE  (sizeof(struct inotify_event))
 #define BUF_LEN     (1024 * (EVENT_SIZE + NAME_MAX + 1))
 
+extern pthread_mutex_t mutexClientDirectory;
+
 void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
-    //pthread_mutex_lock(&(menuParameters->mutexDownloadUpload));
+    pthread_mutex_lock(&mutexClientDirectory);
 
     UploadPacket clientPacket; 
 
@@ -73,7 +75,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
-    //pthread_mutex_unlock(&(menuParameters->mutexDownloadUpload));
+    pthread_mutex_unlock(&mutexClientDirectory);
 }
 
 void deleteInotify(string fileName, clientStruct *menuParameters)  {

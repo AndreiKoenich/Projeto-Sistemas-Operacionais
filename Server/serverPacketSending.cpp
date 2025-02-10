@@ -4,6 +4,28 @@
 #include "serverConstants.hpp"
 #include "serverUtils.hpp"
 
+void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
+
+    uint16_t packetType = htons(clientPacket->packetType);
+    uint16_t payloadLength = htons(clientPacket->payloadLength);
+    uint16_t fileNameLength = htons(clientPacket->fileNameLength);
+
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_UPLOAD_PACKET_FIELDS + clientPacket->payloadLength + clientPacket->fileNameLength;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+
+    memcpy(buffer,&packetType,sizeof(packetType));
+    memcpy(buffer+sizeof(packetType),&fileNameLength, sizeof(clientPacket->fileNameLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength, &payloadLength, sizeof(clientPacket->payloadLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength+sizeof(clientPacket->payloadLength), clientPacket->payload, clientPacket->payloadLength);
+
+    send(clientSocket, buffer, bufferSize, 0);
+
+    //showUploadPacketClient(*clientPacket);
+
+    free(buffer);
+}
+
 void sendDownloadPacket(int clientSocket, DownloadPacket *clientPacket) {
     
     uint16_t packetType = htons(clientPacket->packetType);
@@ -53,4 +75,19 @@ void sendListServerPacket(int clientSocket, ListServerPacket *clientPacket) {
     send(clientSocket, buffer, bufferSize, 0);
     //showListServerPacket(*clientPacket);
     free(buffer);
+}
+
+void sendRequestDeletePacket(int clientSocket, RequestDeletePacket *clientPacket) {
+    uint16_t packetType = htons(clientPacket->packetType);
+    uint16_t fileNameLength = htons(clientPacket->fileNameLength);
+
+    size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_DELETE_INOTIFY_PACKET_FIELDS + clientPacket->fileNameLength;
+    char *buffer = (char*)calloc(bufferSize,sizeof(char));
+    memcpy(buffer,&packetType,sizeof(packetType));
+    memcpy(buffer+sizeof(packetType),&fileNameLength, sizeof(clientPacket->fileNameLength));
+    memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
+
+    send(clientSocket, buffer, bufferSize, 0);
+    //showRequestDeletePacketClient(*clientPacket);
+    free(buffer); 
 }

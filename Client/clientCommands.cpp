@@ -9,6 +9,8 @@
 #include "packetEnum.hpp"
 #include "clientStruct.hpp"
 
+extern pthread_mutex_t mutexClientDirectory;
+
 void requestDownloadCommand(string command, clientStruct *menuParameters) {
 
     string username(menuParameters->username);
@@ -90,6 +92,8 @@ void requestListServerCommand(clientStruct *menuParameters) {
 
 void listClientCommand(clientStruct *menuParameters) {
 
+    pthread_mutex_lock(&mutexClientDirectory);
+
     string username(menuParameters->username);
     namespace fs = std::filesystem;
     string directoryPath(CLIENT_DIRECTORY_PREFIX);
@@ -113,6 +117,8 @@ void listClientCommand(clientStruct *menuParameters) {
     } catch (const exception& e) {
         cerr << "Erro ao acessar o diretorio: " << e.what() << "\n";
     }
+
+    pthread_mutex_unlock(&mutexClientDirectory);
 
     cout << "\nPressione qualquer tecla para continuar." << endl;
     getch_();

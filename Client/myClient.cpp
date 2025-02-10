@@ -9,9 +9,11 @@
 
 using namespace std;
 
+
 int clientSocket;
 pthread_t menuThread;
 pthread_t inotifyThread;
+pthread_mutex_t mutexClientDirectory = PTHREAD_MUTEX_INITIALIZER;
 
 void signalHandler(int signal) {
     if (signal == SIGINT) {
@@ -111,7 +113,6 @@ int main(int argc, char *argv[]) {
     menuParameters.username = argv[1];
     menuParameters.address = argv[2];
     menuParameters.port = argv[3];
-    //menuParameters.mutexDownloadUpload = PTHREAD_MUTEX_INITIALIZER;
 
     pthread_create(&inotifyThread, NULL, monitorClientDirectory, (void*)&menuParameters);
     pthread_create(&menuThread, NULL, showMenu, (void*)&menuParameters);
