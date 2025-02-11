@@ -4,7 +4,7 @@
 #include <string>
 #include "packetStruct.hpp"
 
-void serverUploadPropagation (string username, UploadPacket *clientPacket);
-void serverDeletePropagation (string username, RequestDeletePacket *clientPacket);
+void serverUploadPropagation (string username, UploadPacket *clientPacket, int originOfPropagationSocket);
+void serverDeletePropagation (string username, RequestDeletePacket *clientPacket, int originOfPropagationSocket);
 
 #endif

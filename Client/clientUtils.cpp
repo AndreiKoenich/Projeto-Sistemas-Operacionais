@@ -14,19 +14,6 @@
 
 using namespace std;
 
-int getch_(void) 
-{ 
-    struct termios oldattr, newattr; 
-    int ch; 
-    tcgetattr(STDIN_FILENO, &oldattr); 
-    newattr = oldattr; 
-    newattr.c_lflag &= ~(ICANON | ECHO); 
-    tcsetattr(STDIN_FILENO, TCSANOW, &newattr); 
-    ch = getchar(); 
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldattr); 
-    return ch; 
-}
-
 void reverseString(char* str)
 {
     if (!str) 
@@ -50,10 +37,44 @@ string timeToString(time_t rawTime) {
     return string(buffer);
 }
 
+string showPacketType(int value) {
+    switch (value) {
+        case HELLO:
+            return "HELLO";
+        case UPLOAD:
+            return "UPLOAD";
+        case UPLOAD_INOTIFY:
+            return "UPLOAD_INOTIFY";
+        case UPLOAD_PROPAGATION:
+            return "UPLOAD_PROPAGATION";
+        case REQUEST_DOWNLOAD:
+            return "REQUEST_DOWNLOAD";
+        case DOWNLOAD:
+            return "DOWNLOAD";
+        case DOWNLOAD_ERROR:
+            return "DOWNLOAD_ERROR";
+        case DELETE:
+            return "DELETE";
+        case DELETE_INOTIFY:
+            return "DELETE_INOTIFY";
+        case DELETE_PROPAGATION:
+            return "DELETE_PROPAGATION";
+        case REQUEST_LIST_SERVER:
+            return "REQUEST_LIST_SERVER";
+        case LIST_SERVER:
+            return "LIST_SERVER";
+        case BYE:
+            return "BYE";
+        default:
+            return "UNKNOWN";
+    }
+}
+
 void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket) {
+
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote de requisicao de DOWNLOAD enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;    
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "-----------------------------------------------\n" << endl;   
@@ -62,7 +83,7 @@ void showRequestDownloadPacketClient(RequestDownloadPacket clientPacket) {
 void showDownloadPacketClient (DownloadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote DOWNLOAD recebido com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
@@ -76,7 +97,7 @@ void showDownloadPacketClient (DownloadPacket clientPacket) {
 void showUploadPacketClient (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote UPLOAD enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
@@ -90,7 +111,7 @@ void showUploadPacketClient (UploadPacket clientPacket) {
 void showHelloPacketClient (HelloPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote HELLO enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "Tamanho do nome do usuario:" << clientPacket.usernameLength << endl;
     cout << "Conteudo:" << clientPacket.username << endl;
     cout << "-----------------------------------------------\n" << endl;
@@ -99,21 +120,21 @@ void showHelloPacketClient (HelloPacket clientPacket) {
 void showByePacketClient (ByePacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote BYE enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 
 void showRequestListServerPacketClient(RequestListServerPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote de REQUEST LIST SERVER enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "-----------------------------------------------\n" << endl;    
 }
 
 void showListServerPacketClient(ListServerPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote LIST SERVER recebido com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "Tamanho do payload:" << clientPacket.payloadLength << endl;       
     cout << "Conteudo:" << clientPacket.payload << endl;
     cout << "-----------------------------------------------\n" << endl;    
@@ -122,10 +143,26 @@ void showListServerPacketClient(ListServerPacket clientPacket) {
 void showRequestDeletePacketClient(RequestDeletePacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
     cout << "Pacote de requisicao de DELETE enviado com sucesso.\n" << endl;
-    cout << "Tipo:" << clientPacket.packetType << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;
     cout << "-----------------------------------------------\n" << endl;   
+}
+
+void showReceivedPropagationPacketClient (UploadPacket clientPacket) {
+    cout << "\n-----------------------------------------------" << endl;
+    cout << "Pacote UPLOAD_PROPAGATION recebido com sucesso.\n" << endl;
+    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
+    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
+    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
+    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl; 
+
+    if (clientPacket.payloadLength != 0)      
+        cout << "Conteudo:" << clientPacket.payload << endl;
+    else
+        cout << "O conteudo do pacote esta vazio." << endl;
+        
+    cout << "-----------------------------------------------\n" << endl;
 }
 
 void createRemoteDirectory (char username[], int clientSocket) {
@@ -153,7 +190,7 @@ void createClientDirectory(char username[]) {
 
     if (stat(client_directory_name, &st) == -1) 
         if (mkdir(client_directory_name, 0777) == -1) {
-            cout << "Erro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
+            cerr << "Erro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
             exit(1);
         }     
 }
@@ -193,6 +230,5 @@ void helpMenu() {
     cout << "DESCRICAO:" << endl;
     cout << "Fecha a sessao com o servidor.\n"  << endl;
 
-    cout << "Pressione qualquer tecla para continuar." << endl;
-    getch_();
+        ;
 }

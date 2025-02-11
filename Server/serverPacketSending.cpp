@@ -3,6 +3,7 @@
 
 #include "serverConstants.hpp"
 #include "serverUtils.hpp"
+#include "packetEnum.hpp"
 
 void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
 
@@ -21,7 +22,10 @@ void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
 
     send(clientSocket, buffer, bufferSize, 0);
 
-    //showUploadPacketClient(*clientPacket);
+
+    //showUploadPacketServer(*clientPacket);
+
+
 
     free(buffer);
 }
@@ -88,6 +92,6 @@ void sendRequestDeletePacket(int clientSocket, RequestDeletePacket *clientPacket
     memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
 
     send(clientSocket, buffer, bufferSize, 0);
-    //showRequestDeletePacketClient(*clientPacket);
+    //showRequestDeletePacketServer(*clientPacket);
     free(buffer); 
 }

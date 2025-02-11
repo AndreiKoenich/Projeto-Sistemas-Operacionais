@@ -35,9 +35,8 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "rb")) == NULL) {
-        cout << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload pelo Inotify." << endl;
-        cout << "Pressione qualquer tecla para continuar." << endl;
-        getch_();
+        cerr << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload pelo Inotify." << endl;
+        //        
         return;
     }
 
@@ -60,10 +59,8 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != fileLength) {
-        cout << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload pelo Inotify." << endl;
-        cout << "Pressione qualquer tecla para continuar." << endl;
-        fclose(selectedFile);
-        getch_();
+        cerr << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload pelo Inotify." << endl;
+        fclose(selectedFile);    
         return;
     }
 

@@ -7,6 +7,7 @@
 #include "packetEnum.hpp"
 #include "packetStruct.hpp"
 
+extern pthread_mutex_t mutexClientSocket;
 
 void sendRequestDownloadPacket(int clientSocket, RequestDownloadPacket *clientPacket) {
     uint16_t packetType = htons(clientPacket->packetType);
@@ -39,7 +40,6 @@ void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
     memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength),clientPacket->fileName, clientPacket->fileNameLength);
     memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength, &payloadLength, sizeof(clientPacket->payloadLength));
     memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength+sizeof(clientPacket->payloadLength), clientPacket->payload, clientPacket->payloadLength);
-
     send(clientSocket, buffer, bufferSize, 0);
 
     //showUploadPacketClient(*clientPacket);
@@ -58,7 +58,6 @@ void sendHelloPacket(int clientSocket, HelloPacket *clientPacket) {
     memcpy(buffer,&packetType,sizeof(packetType));
     memcpy(buffer+sizeof(packetType),&usernameLength, sizeof(clientPacket->usernameLength));
     memcpy(buffer+sizeof(packetType)+sizeof(usernameLength),clientPacket->username, clientPacket->usernameLength);
-
     send(clientSocket, buffer, bufferSize, 0);
 
     //showHelloPacketClient(*clientPacket);
@@ -88,6 +87,7 @@ void sendRequestListServerPacket (int clientSocket, RequestListServerPacket *cli
     size_t bufferSize = sizeof(uint16_t)*NUMBER_OF_REQUEST_LIST_SERVER_PACKET_FIELDS;
     char *buffer = (char*)calloc(bufferSize,sizeof(char));
     memcpy(buffer,&packetType,sizeof(packetType));
+
     send(clientSocket, buffer, bufferSize, 0);
 
     //showRequestListServerPacketClient(*clientPacket);

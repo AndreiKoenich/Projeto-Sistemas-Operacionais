@@ -9,6 +9,7 @@
 #include "serverConstants.hpp"
 #include "serverUtils.hpp"
 #include "serverPacketSending.hpp"
+#include "serverPacketPropagation.hpp"
 
 string receiveHelloPacket (int clientSocket) {
     HelloPacket clientPacket;
@@ -34,7 +35,7 @@ string receiveHelloPacket (int clientSocket) {
     struct stat st = {0};
     if (stat(clientDirectoryName, &st) == -1) 
         if (mkdir(clientDirectoryName, 0777) == -1) {
-            cout << "Erro ao criar o diretorio remoto do cliente." << endl;
+            cerr << "Erro ao criar o diretorio remoto do cliente." << endl;
             exit(1);
         }  
 
@@ -67,6 +68,8 @@ void receiveRequestDownloadPacket(int clientSocket, string username) {
     strcat(filePath,"//");
     strcat(filePath,clientPacket.fileName);
 
+    //showRequestDownloadPacketServer(clientPacket);
+
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "rb")) == NULL) {
         DownloadErrorPacket errorPacket;
@@ -86,10 +89,12 @@ void receiveRequestDownloadPacket(int clientSocket, string username) {
 	clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) 
-        cout << "Erro na leitura do arquivo nao-sincronizado, ao utilizar o comando download, para armazenar os dados em buffer." << endl;
+        cerr << "Erro na leitura do arquivo nao-sincronizado, ao utilizar o comando download, para armazenar os dados em buffer." << endl;
     
-    else
+    else {
         sendDownloadPacket(clientSocket, &clientPacket);
+        cout << "> Usuario " << username << " requisitou download do arquivo " << clientPacket.fileName << "." << endl;
+    }
 
     fclose(selectedFile);
     free(usernameStr);
@@ -140,18 +145,20 @@ void receiveRequestListServerPacket(int clientSocket, string username) {
 
     sendListServerPacket(clientSocket, &clientPacket);
 
+    cout << "> Usuario " << username << " requisitou listagem de arquivos do seu diretorio remoto." << endl;
+
     free(clientPacket.payload);
     free(usernameStr);
 }
 
-void receiveUploadPacket (int clientSocket, string username) {
+void receiveUploadPacket (int clientSocket, string username, uint16_t packetType) {
 
     //cout << "Iniciando upload pelo servidor..." << endl;
     UploadPacket clientPacket;
     uint16_t payloadLength;
     uint16_t fileNameLength;
 
-    clientPacket.packetType = UPLOAD;
+    clientPacket.packetType = packetType;
 
     recv(clientSocket, &fileNameLength, sizeof(fileNameLength), 0);
     clientPacket.fileNameLength = ntohs(fileNameLength);
@@ -182,15 +189,23 @@ void receiveUploadPacket (int clientSocket, string username) {
     strcat(filePath,clientPacket.fileName);
 
     FILE *selectedFile;
+
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        cout << "Erro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando upload." << endl;
+        cerr << "Erro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando upload." << endl;
         exit(1);
     }
 
     if(clientPacket.payloadLength != 0 && fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
-        cout << "Erro na escrita do arquivo, ao utilizar o comando upload." << endl;
+        cerr << "Erro na escrita do arquivo, ao utilizar o comando upload." << endl;
         exit(1);
     }
+
+    if (clientPacket.packetType == UPLOAD)
+        cout << "> Usuario " << username << " fez upload do arquivo " << clientPacket.fileName << " para o seu diretorio remoto." << endl;
+    else if (clientPacket.packetType == UPLOAD_INOTIFY)
+        cout << "> Usuario " << username << " fez upload do arquivo " << clientPacket.fileName << " para o seu diretorio remoto, por meio de uma mudanca realizada no diretorio local." << endl;
+
+    serverUploadPropagation (username, &clientPacket, clientSocket);
 
     fclose(selectedFile);
     free(usernameStr);
@@ -198,7 +213,7 @@ void receiveUploadPacket (int clientSocket, string username) {
     free(clientPacket.payload);
 }
 
-void receiveRequestDeletePacket(int clientSocket, string username) {
+void receiveRequestDeletePacket(int clientSocket, string username, uint16_t packetType) {
     RequestDeletePacket clientPacket;
     uint16_t fileNameLength;
 
@@ -224,8 +239,14 @@ void receiveRequestDeletePacket(int clientSocket, string username) {
 
     if (remove(filePath) != 0)
         cerr << "Erro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao do Inotify." << endl;
-    else
+    //else
         //cout << "\nArquivo " << filePath << " removido com sucesso." << endl;
+
+    cout << "> Usuario " << username << " deletou o arquivo " << clientPacket.fileName << " do seu diretorio remoto, por meio de uma exclusao realizada no diretorio local." << endl;
+
+    //showRequestDeletePacketServer(clientPacket);
+
+    serverDeletePropagation (username, &clientPacket, clientSocket);
 
     free(usernameStr);
     free(clientPacket.fileName);

@@ -24,7 +24,7 @@ void requestDownloadCommand(string command, clientStruct *menuParameters) {
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
     sendRequestDownloadPacket(menuParameters->clientSocket, &clientPacket);
-    receivePacketFromServer(menuParameters->clientSocket, username);
+    //receivePacketFromServer(menuParameters->clientSocket, username);
 
     free(clientPacket.fileName);
 }
@@ -36,9 +36,8 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     UploadPacket clientPacket;    
     FILE *selectedFile;
     if((selectedFile = fopen(filePath.data(), "rb")) == NULL) {
-        cout << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload." << endl;
-        cout << "Pressione qualquer tecla para continuar." << endl;
-        getch_();
+        cerr << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload." << endl;
+                
         return;
     }
 
@@ -62,10 +61,8 @@ void uploadCommand(string command, clientStruct *menuParameters) {
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != fileLength) {
-        cout << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
-        cout << "Pressione qualquer tecla para continuar." << endl;
+        cerr << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
         fclose(selectedFile);
-        getch_();
         return;
     }
 
@@ -77,8 +74,8 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
-    cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
-    getch_();
+    //cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
+    
 }
 
 void requestListServerCommand(clientStruct *menuParameters) {
@@ -87,7 +84,7 @@ void requestListServerCommand(clientStruct *menuParameters) {
     RequestListServerPacket clientPacket;
     clientPacket.packetType = REQUEST_LIST_SERVER;
     sendRequestListServerPacket(menuParameters->clientSocket, &clientPacket);
-    receivePacketFromServer(menuParameters->clientSocket, username);
+    //receivePacketFromServer(menuParameters->clientSocket, username);
 }
 
 void listClientCommand(clientStruct *menuParameters) {
@@ -120,8 +117,8 @@ void listClientCommand(clientStruct *menuParameters) {
 
     pthread_mutex_unlock(&mutexClientDirectory);
 
-    cout << "\nPressione qualquer tecla para continuar." << endl;
-    getch_();
+    //cout << "\nPressione qualquer tecla para continuar." << endl;
+    
 }
 
 void deleteCommand (string command, clientStruct *menuParameters) {
@@ -138,13 +135,13 @@ void deleteCommand (string command, clientStruct *menuParameters) {
 
     if (remove(directoryPathStr) != 0)
         cerr << "Erro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
-    else
-        cout << "\nArquivo " << directoryPath << " removido com sucesso." << endl;
+    //else
+        //cout << "\nArquivo " << directoryPath << " removido com sucesso." << endl;
 
     free(directoryPathStr);
 
-    cout << "\nPressione qualquer tecla para continuar." << endl;
-    getch_();
+    //cout << "\nPressione qualquer tecla para continuar." << endl;
+    
 }
 
 void deleteInotify(string username, string fileName, int clientSocket) {
@@ -157,14 +154,7 @@ void deleteInotify(string username, string fileName, int clientSocket) {
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
     sendRequestDeletePacket(clientSocket, &clientPacket);
-    cout << "Comando de requisicao de delete executado com sucesso." << endl;
+    //cout << "Comando de requisicao de delete executado com sucesso." << endl;
 
     free(clientPacket.fileName);
-}
-
-void exitCommand(int clientSocket) {
-    ByePacket clientPacket;  
-    clientPacket.packetType = BYE;
-    sendByePacket(clientSocket, &clientPacket);
-    close(clientSocket);
 }

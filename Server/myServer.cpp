@@ -21,13 +21,14 @@ void addNewClientInList (serverThreadStruct *clientInfo) {
 
     pthread_mutex_lock(&clientListMutex);
 
-    list<serverThreadStruct>::iterator it;
+    //list<serverThreadStruct>::iterator it;
 
-    for (it = onlineClients.begin(); it != onlineClients.end(); it++)
-        if (it->username == clientInfo->username)
-            clientInfo->deviceNumber++;
+    //for (it = onlineClients.begin(); it != onlineClients.end(); it++)
+      //  if (it->username == clientInfo->username)
+            //clientInfo->deviceNumber++;
 
     onlineClients.push_back(*clientInfo);
+    cout << "> Novo dispositivo do usuario " << clientInfo->username << " foi conectado." << endl;
 
     pthread_mutex_unlock(&clientListMutex);
 }
@@ -39,15 +40,19 @@ void removeClientFromList (serverThreadStruct *clientInfo) {
     list<serverThreadStruct>::iterator it;
 
     for (it = onlineClients.begin(); it != onlineClients.end(); it++)
-        if (it->username == clientInfo->username && it->deviceNumber == clientInfo->deviceNumber) {
+        if (it->username == clientInfo->username && it->clientSocket == clientInfo->clientSocket) {
             it = onlineClients.erase(it);
             break;
         }
 
     close(clientInfo->clientSocket);
-    pthread_cancel(clientThreads[clientInfo->threadNumber-1]);
+
+    cout << "> Dispositivo do usuario " << clientInfo->username << " foi desconectado." << endl;
             
     pthread_mutex_unlock(&clientListMutex);
+
+    pthread_cancel(clientThreads[clientInfo->threadNumber-1]);
+
 }
 
 void* receivePacketFromClient (void* threadInfo) {
@@ -73,19 +78,18 @@ void* receivePacketFromClient (void* threadInfo) {
                 receiveRequestDownloadPacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case UPLOAD:
-                receiveUploadPacket(clientInfo.clientSocket, clientInfo.username);
+                receiveUploadPacket(clientInfo.clientSocket, clientInfo.username, packetType);
             break;
             case UPLOAD_INOTIFY:
-                receiveUploadPacket(clientInfo.clientSocket, clientInfo.username);
+                receiveUploadPacket(clientInfo.clientSocket, clientInfo.username, packetType);
             break;
             case REQUEST_LIST_SERVER:
                 receiveRequestListServerPacket(clientInfo.clientSocket, clientInfo.username);
             break;
             case DELETE_INOTIFY:
-                receiveRequestDeletePacket(clientInfo.clientSocket, clientInfo.username);
+                receiveRequestDeletePacket(clientInfo.clientSocket, clientInfo.username, packetType);
             break;
             case BYE:
-                //showByePacketServer(clientInfo.username);
                 removeClientFromList(&clientInfo);
             break;
         }
@@ -103,11 +107,11 @@ void serverLoop (int serverSocket) {
 
         int clientSocket = accept(serverSocket, nullptr, nullptr);
 
-        system("clear");
+        //system("clear");
         threadNumber++;
 
-        cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
-        cout << "Nova conexao aceita com sucesso. Numero de conexoes aceitas ate o momento: " << threadNumber << endl;
+        //cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
+        //cout << "Nova conexao aceita com sucesso. Numero de conexoes aceitas ate o momento: " << threadNumber << endl;
 
         clientThreads = (pthread_t*) realloc(clientThreads,threadNumber*sizeof(pthread_t));
 

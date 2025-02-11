@@ -11,7 +11,6 @@ void requestDownloadCommand(string command, clientStruct *menuParameters);
 void uploadCommand(string command, clientStruct *menuParameters);
 void listClientCommand(clientStruct *menuParameters);
 void requestListServerCommand(clientStruct *menuParameters);
-void exitCommand(int clientSocket);
 void deleteCommand (string command, clientStruct *menuParameters);
 void deleteInotify(string username, string fileName, int clientSocket);
 
