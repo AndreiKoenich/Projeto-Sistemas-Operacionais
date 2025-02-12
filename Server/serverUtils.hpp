@@ -17,7 +17,6 @@ void showByePacketServer (string username);
 void showListServerPacket(ListServerPacket clientPacket);
 string showPacketType(int value);
 void showRequestDeletePacketServer(RequestDeletePacket clientPacket);
-void showUploadPropagationPacketServer (UploadPacket clientPacket);
 void showRequestDownloadPacketServer (DownloadPacket clientPacket);
 
 #endif

@@ -2,16 +2,21 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sstream>
+#include <sys/stat.h>
 
 #include "clientConstants.hpp"
 #include "clientUtils.hpp"
 #include "packetEnum.hpp"
 #include "clientStruct.hpp"
+#include "propagationInfo.hpp"
 
 extern stringstream textToImpress;
 
 extern pthread_mutex_t mutexClientDirectory;
 extern pthread_mutex_t mutexClientSocket;
+
+propagationInfo lastUploadPropagation;
+propagationInfo lastDeletePropagation;
 
 void receiveDownloadPacket(int clientSocket, string username) {
 
@@ -63,7 +68,6 @@ void receiveDownloadPacket(int clientSocket, string username) {
     textToImpress << "Arquivo recebido com sucesso do servidor e armazenado em\n" << filePath << endl;
 }
 
-
 void receiveUploadPropagationPacket(int clientSocket, string username) {
 
     pthread_mutex_lock(&mutexClientDirectory);
@@ -85,8 +89,11 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
     recv(clientSocket, &payloadLength, sizeof(payloadLength), 0);
     clientPacket.payloadLength = ntohs(payloadLength);
 
-    clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
-    recv(clientSocket, clientPacket.payload, payloadLength, 0);
+    if (clientPacket.payloadLength != 0) {
+        clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
+        recv(clientSocket, clientPacket.payload, payloadLength, 0);
+    }
+    //clientPacket.payload[clientPacket.payloadLength-1] = '\0';
 
     pthread_mutex_unlock(&mutexClientSocket);
 
@@ -95,15 +102,14 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
     char filePath[FULL_DIRECTORY_NAME_SIZE];
     memset(filePath,0,sizeof(filePath));
     getcwd(filePath,FULL_DIRECTORY_NAME_SIZE);
-    strcat(filePath,"//");
+    strcat(filePath,"/");
     strcat(filePath,CLIENT_DIRECTORY_PREFIX);
     char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
     username.copy(usernameStr,username.length());
     usernameStr[username.length()] = '\0';
     strcat(filePath,usernameStr);
-    strcat(filePath,"//");
+    strcat(filePath,"/");
     strcat(filePath,clientPacket.fileName);
-
 
     //cout << "Diretorio de recebimento de propagacao:\n" << filePath << endl;
 
@@ -112,18 +118,25 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
         cerr << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
         //exit(1);
     }
-
-    if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
+ 
+    if(clientPacket.payloadLength != 0 && fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength,selectedFile) != (size_t)clientPacket.payloadLength) {
         cerr << "\n\nErro na escrita do arquivo ao realizar a propagacao do upload." << endl;
         //exit(1);
     }
 
+    lastUploadPropagation.filename = clientPacket.fileName;
+
+    if (clientPacket.payloadLength != 0)
+        lastUploadPropagation.payload = clientPacket.payload;
+    else
+        lastUploadPropagation.payload = "";
+
     fclose(selectedFile);
     free(usernameStr);
     free(clientPacket.fileName);
-    free(clientPacket.payload);
 
-    //cout << "\n\nArquivo de propagacao de upload recebido com sucesso e armazenado em:\n" << filePath << endl;
+    if (clientPacket.payloadLength != 0)
+        free(clientPacket.payload);
 
     pthread_mutex_unlock(&mutexClientDirectory);
 }
@@ -164,6 +177,9 @@ void receiveDeletePropagationPacket(int clientSocket, string username) {
         cerr << "\n\nErro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
     else
         //cout << "Arquivo " << filePath << " removido com sucesso." << endl;
+
+    lastDeletePropagation.filename = clientPacket.fileName;
+    lastDeletePropagation.payload = "";
 
     free(usernameStr);
     free(clientPacket.fileName);

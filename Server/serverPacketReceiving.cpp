@@ -202,15 +202,16 @@ void receiveUploadPacket (int clientSocket, string username, uint16_t packetType
 
     if (clientPacket.packetType == UPLOAD)
         cout << "> Usuario " << username << " fez upload do arquivo " << clientPacket.fileName << " para o seu diretorio remoto." << endl;
-    else if (clientPacket.packetType == UPLOAD_INOTIFY)
+    else if (clientPacket.packetType == UPLOAD_INOTIFY) {
         cout << "> Usuario " << username << " fez upload do arquivo " << clientPacket.fileName << " para o seu diretorio remoto, por meio de uma mudanca realizada no diretorio local." << endl;
-
-    serverUploadPropagation (username, &clientPacket, clientSocket);
+        serverUploadPropagation (username, &clientPacket, clientSocket);
+    }
 
     fclose(selectedFile);
     free(usernameStr);
     free(clientPacket.fileName);
-    free(clientPacket.payload);
+    if (clientPacket.payloadLength != 0)
+        free(clientPacket.payload);
 }
 
 void receiveRequestDeletePacket(int clientSocket, string username, uint16_t packetType) {

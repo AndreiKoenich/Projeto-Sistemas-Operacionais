@@ -21,11 +21,7 @@ void sendUploadPacket(int clientSocket, UploadPacket *clientPacket) {
     memcpy(buffer+sizeof(packetType)+sizeof(fileNameLength)+clientPacket->fileNameLength+sizeof(clientPacket->payloadLength), clientPacket->payload, clientPacket->payloadLength);
 
     send(clientSocket, buffer, bufferSize, 0);
-
-
     //showUploadPacketServer(*clientPacket);
-
-
 
     free(buffer);
 }

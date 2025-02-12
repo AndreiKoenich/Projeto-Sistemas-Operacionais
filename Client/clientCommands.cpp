@@ -135,6 +135,15 @@ void deleteCommand (string command, clientStruct *menuParameters) {
     else
         textToImpress << "\n\nArquivo " << directoryPath << " removido com sucesso." << endl;
 
+    RequestDeletePacket clientPacket;
+    clientPacket.packetType = DELETE_INOTIFY;
+    clientPacket.fileNameLength = fileName.length()+1;
+    clientPacket.fileName = (char*)calloc(clientPacket.fileNameLength,sizeof(char));
+    fileName.copy(clientPacket.fileName,clientPacket.fileNameLength-1);
+    clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
+
+    sendRequestDeletePacket(menuParameters->clientSocket, &clientPacket);
+    free(clientPacket.fileName);
     free(directoryPathStr);    
 }
 

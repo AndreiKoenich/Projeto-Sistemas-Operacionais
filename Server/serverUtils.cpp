@@ -89,23 +89,13 @@ void showHelloPacketServer (HelloPacket clientPacket) {
 
 void showUploadPacketServer (UploadPacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote UPLOAD recebido com sucesso.\n" << endl;
-    cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
-    cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
-    cout << "Nome do arquivo:" << clientPacket.fileName << endl;
-    cout << "Tamanho do payload:" << clientPacket.payloadLength << endl; 
 
-    if (clientPacket.payloadLength != 0)      
-        cout << "Conteudo:" << clientPacket.payload << endl;
-    else
-        cout << "O conteudo do pacote esta vazio." << endl;
-        
-    cout << "-----------------------------------------------\n" << endl;
-}
-
-void showUploadPropagationPacketServer (UploadPacket clientPacket) {
-    cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote UPLOAD_PROPAGATION enviado com sucesso.\n" << endl;
+    if (clientPacket.packetType == UPLOAD)
+        cout << "Pacote UPLOAD recebido com sucesso.\n" << endl;
+    else if (clientPacket.packetType == UPLOAD_INOTIFY)
+        cout << "Pacote UPLOAD_INOTIFY recebido com sucesso.\n" << endl;
+    else if (clientPacket.packetType == UPLOAD_PROPAGATION)
+        cout << "Pacote UPLOAD_PROPAGATION enviado com sucesso.\n" << endl;
     cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "Tamanho do nome do arquivo:" << clientPacket.fileNameLength << endl;
     cout << "Nome do arquivo:" << clientPacket.fileName << endl;

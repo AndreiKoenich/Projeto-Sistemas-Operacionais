@@ -8,6 +8,7 @@
 #include "packetEnum.hpp"
 #include "clientPacketSending.hpp"
 #include "clientStruct.hpp"
+#include "propagationInfo.hpp"
 
 using namespace std;
 
@@ -15,6 +16,9 @@ using namespace std;
 #define BUF_LEN     (1024 * (EVENT_SIZE + NAME_MAX + 1))
 
 extern pthread_mutex_t mutexClientDirectory;
+
+extern propagationInfo lastUploadPropagation;
+extern propagationInfo lastDeletePropagation;
 
 void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
@@ -35,8 +39,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "rb")) == NULL) {
-        cerr << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload pelo Inotify." << endl;
-        //        
+        cerr << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload pelo Inotify." << endl;       
         return;
     }
 
@@ -58,7 +61,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
     clientPacket.payloadLength = fileLength;
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
-    if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != fileLength) {
+    if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != (size_t)fileLength) {
         cerr << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload pelo Inotify." << endl;
         fclose(selectedFile);    
         return;
@@ -68,7 +71,12 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
         clientPacket.payload[fileLength-1] = '\0';
 
     fclose(selectedFile);
-    sendUploadPacket(menuParameters->clientSocket, &clientPacket);
+
+    if (lastUploadPropagation.filename != string(clientPacket.fileName) || lastUploadPropagation.payload != string(clientPacket.payload))
+        sendUploadPacket(menuParameters->clientSocket, &clientPacket);
+    lastUploadPropagation.filename = "";
+    lastUploadPropagation.payload = "";
+
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
@@ -77,6 +85,8 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
 void deleteInotify(string fileName, clientStruct *menuParameters)  {
 
+    pthread_mutex_lock(&mutexClientDirectory);
+
     RequestDeletePacket clientPacket;
     clientPacket.packetType = DELETE_INOTIFY;
     clientPacket.fileNameLength = fileName.length()+1;
@@ -84,10 +94,16 @@ void deleteInotify(string fileName, clientStruct *menuParameters)  {
     fileName.copy(clientPacket.fileName,clientPacket.fileNameLength-1);
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
-    sendRequestDeletePacket(menuParameters->clientSocket, &clientPacket);
+    if (lastDeletePropagation.filename != string(clientPacket.fileName))
+        sendRequestDeletePacket(menuParameters->clientSocket, &clientPacket);
+    lastDeletePropagation.filename = "";
+    lastDeletePropagation.payload = "";
     //cout << "Comando de requisicao de delete executado com sucesso." << endl;
 
     free(clientPacket.fileName);
+
+    pthread_mutex_unlock(&mutexClientDirectory);
+
 }
 
 bool isTemporaryFile(const string fileName) {
@@ -141,39 +157,36 @@ void* monitorClientDirectory (void* parameters) {
         }
 
         for (int i = 0; i < length;) {
-                    struct inotify_event *event = (struct inotify_event *) &buffer[i];
-                    if (event->len) {
-                        string fileName = event->name;
-                        
-                        if (!isTemporaryFile(fileName))
-                        {   
-                            if (event->mask & IN_MOVED_TO || event->mask & IN_CREATE) {
+                struct inotify_event *event = (struct inotify_event *) &buffer[i];
+                if (event->len) {
+                    string fileName = event->name;
+                    if (!isTemporaryFile(fileName))
+                    {   
+                        if (event->mask & IN_MOVED_TO || event->mask & IN_CREATE) {
 
-                                if (lastModifiedFile == fileName) 
-                                    modificationFlag = true;
-                                else {
-                                    //cout << "Arquivo " << fileName << " foi movido para dentro do diretorio." << endl;
-                                    uploadInotify(fileName, menuParameters);
+                            if (lastModifiedFile == fileName) 
+                                modificationFlag = true;
+                            else {
+                                //cout << "Arquivo " << fileName << " foi movido para dentro do diretorio." << endl;
+                                uploadInotify(fileName, menuParameters);
 
-                                }     
-                            }
-                        
-                            else if (event->mask & IN_CLOSE_WRITE) {
-                                lastModifiedFile = fileName;
+                            }     
+                        }
+                    
+                        else if (event->mask & IN_CLOSE_WRITE) {
+                            lastModifiedFile = fileName;
 
-                                if (modificationFlag == true) {
-                                    //cout << "Arquivo " << fileName << " foi modificado." << endl;
-                                    modificationFlag = false;
-                                    uploadInotify(fileName, menuParameters);
-                                }   
-                            }
+                            if (modificationFlag == true) {
+                                //cout << "Arquivo " << fileName << " foi modificado." << endl;
+                                modificationFlag = false;
+                                uploadInotify(fileName, menuParameters);
+                            }   
+                        }
 
-                            else if (event->mask & IN_MOVED_FROM) {
-                                //cout << "Arquivo " << fileName << " foi movido para fora do diretorio." << endl;
-                                deleteInotify(fileName, menuParameters);
-                            }
-                                    
-                        
+                        else if (event->mask & IN_MOVED_FROM) {
+                            //cout << "Arquivo " << fileName << " foi movido para fora do diretorio." << endl;
+                            deleteInotify(fileName, menuParameters);
+                        } 
                     }
                     i += EVENT_SIZE + event->len;
                 }
