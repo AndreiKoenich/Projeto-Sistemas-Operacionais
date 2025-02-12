@@ -1,11 +1,14 @@
 #include <iostream>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <sstream>
 
 #include "clientConstants.hpp"
 #include "clientUtils.hpp"
 #include "packetEnum.hpp"
 #include "clientStruct.hpp"
+
+extern stringstream textToImpress;
 
 extern pthread_mutex_t mutexClientDirectory;
 extern pthread_mutex_t mutexClientSocket;
@@ -44,12 +47,12 @@ void receiveDownloadPacket(int clientSocket, string username) {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        cerr << "Erro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
+        cerr << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
         //exit(1);
     }
 
     if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
-        cerr << "Erro na escrita do arquivo, ao utilizar o comando download." << endl;
+        cerr << "\n\nErro na escrita do arquivo, ao utilizar o comando download." << endl;
         //exit(1);
     }
 
@@ -57,7 +60,7 @@ void receiveDownloadPacket(int clientSocket, string username) {
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
-    //cout << "Arquivo recebido com sucesso do servidor e armazenado em:\n" << filePath << endl;
+    textToImpress << "Arquivo recebido com sucesso do servidor e armazenado em\n" << filePath << endl;
 }
 
 
@@ -106,12 +109,12 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        cerr << "Erro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
+        cerr << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
         //exit(1);
     }
 
     if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
-        cerr << "Erro na escrita do arquivo ao realizar a propagacao do upload." << endl;
+        cerr << "\n\nErro na escrita do arquivo ao realizar a propagacao do upload." << endl;
         //exit(1);
     }
 
@@ -120,7 +123,7 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
-    //cout << "Arquivo de propagacao de upload recebido com sucesso e armazenado em:\n" << filePath << endl;
+    //cout << "\n\nArquivo de propagacao de upload recebido com sucesso e armazenado em:\n" << filePath << endl;
 
     pthread_mutex_unlock(&mutexClientDirectory);
 }
@@ -158,8 +161,8 @@ void receiveDeletePropagationPacket(int clientSocket, string username) {
     strcat(filePath,clientPacket.fileName);
 
     if (remove(filePath) != 0)
-        cerr << "Erro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
-    //else
+        cerr << "\n\nErro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
+    else
         //cout << "Arquivo " << filePath << " removido com sucesso." << endl;
 
     free(usernameStr);
@@ -181,7 +184,7 @@ void receiveListServerPacket(int clientSocket) {
     clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
     recv(clientSocket, clientPacket.payload, payloadLength, 0);
 
-    cout << clientPacket.payload << endl;
+    textToImpress << clientPacket.payload << endl;
 
     //showListServerPacketClient(clientPacket);
     free(clientPacket.payload); 
@@ -204,7 +207,7 @@ void* receivePacketFromServerLoop (void* parameters) {
                 receiveDownloadPacket(menuParameters->clientSocket, menuParameters->username);
             break;
             case DOWNLOAD_ERROR:
-                cerr << "Erro ao tentar fazer download do arquivo no servidor." << endl;
+                cerr << "\n\nErro ao tentar fazer download do arquivo no servidor." << endl;
             break;
             case LIST_SERVER:
                 receiveListServerPacket(menuParameters->clientSocket);

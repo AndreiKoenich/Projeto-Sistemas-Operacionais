@@ -1,6 +1,7 @@
 #include <iostream>
 #include <arpa/inet.h>
 #include <csignal>
+#include <sstream>
 
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
@@ -20,6 +21,8 @@ pthread_t propagationThread;
 
 pthread_mutex_t mutexClientDirectory = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutexClientSocket = PTHREAD_MUTEX_INITIALIZER;
+
+stringstream textToImpress;
 
 void exitCommand(int clientSocket) {
 
@@ -64,17 +67,19 @@ void* showMenu(void* parameters) {
     clientStruct *menuParameters = (clientStruct*) parameters;
 
     while (true) {
+        system("clear");
         cout << "PROJETO DE SISTEMAS OPERACIONAIS II" << endl;
         cout << "AUTOR: ANDREI POCHMANN KOENICH\n" << endl;
         cout << "-----------------------------------------------\n" << endl;
-
         cout << "Conexao com servidor estabelecida com sucesso.\n" << endl;
         cout << "USUARIO: " << menuParameters->username << endl;
         cout << "ENDERECO IP DO SERVIDOR: " << menuParameters->address << endl;
         cout << "PORTA DO SERVIDOR: " << menuParameters->port << endl;
         cout << "\n-----------------------------------------------\n" << endl;
+        cout << textToImpress.str();
+        textToImpress.str("");
+        cout << "\nDigite o comando:" << endl;
 
-        cout << "Digite o comando:" << endl;
         string command;
         getline(cin, command);
 

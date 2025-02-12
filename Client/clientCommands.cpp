@@ -1,6 +1,7 @@
 #include <sys/socket.h>
 #include <bits/stdc++.h>
 #include <sys/stat.h>
+#include <sstream>
 
 #include "clientConstants.hpp"
 #include "clientPacketSending.hpp"
@@ -10,6 +11,7 @@
 #include "clientStruct.hpp"
 
 extern pthread_mutex_t mutexClientDirectory;
+extern stringstream textToImpress;
 
 void requestDownloadCommand(string command, clientStruct *menuParameters) {
 
@@ -36,8 +38,7 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     UploadPacket clientPacket;    
     FILE *selectedFile;
     if((selectedFile = fopen(filePath.data(), "rb")) == NULL) {
-        cerr << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload." << endl;
-                
+        cerr << "\n\nErro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload." << endl;
         return;
     }
 
@@ -61,7 +62,7 @@ void uploadCommand(string command, clientStruct *menuParameters) {
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != fileLength) {
-        cerr << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
+        cerr << "\n\nErro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
         fclose(selectedFile);
         return;
     }
@@ -74,8 +75,7 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     free(clientPacket.fileName);
     free(clientPacket.payload);
 
-    //cout << "Comando upload executado com sucesso. Pressione qualquer tecla para continuar." << endl;
-    
+    textToImpress << "Comando upload executado com sucesso." << endl;
 }
 
 void requestListServerCommand(clientStruct *menuParameters) {
@@ -101,11 +101,11 @@ void listClientCommand(clientStruct *menuParameters) {
             if (fs::is_regular_file(entry.path())) {
                 struct stat fileStat;
                 if (stat(entry.path().c_str(), &fileStat) == 0) {
-                    cout << "\nArquivo: " << entry.path().filename() << "\n";
-                    cout << "  Modification Time (mtime): " << timeToString(fileStat.st_mtime) << "\n";
-                    cout << "  Access Time (atime): " << timeToString(fileStat.st_atime) << "\n";
-                    cout << "  Change Time (ctime): " << timeToString(fileStat.st_ctime) << "\n";
-                    cout << "-----------------------------------------\n";
+                    textToImpress << "Arquivo: " << entry.path().filename() << "\n";
+                    textToImpress << "  Modification Time (mtime): " << timeToString(fileStat.st_mtime) << "\n";
+                    textToImpress << "  Access Time (atime): " << timeToString(fileStat.st_atime) << "\n";
+                    textToImpress << "  Change Time (ctime): " << timeToString(fileStat.st_ctime) << "\n";
+                    textToImpress << "-----------------------------------------\n";
                 } else {
                     cerr << "Erro ao obter estatisticas do arquivo: " << entry.path() << "\n";
                 }
@@ -115,10 +115,7 @@ void listClientCommand(clientStruct *menuParameters) {
         cerr << "Erro ao acessar o diretorio: " << e.what() << "\n";
     }
 
-    pthread_mutex_unlock(&mutexClientDirectory);
-
-    //cout << "\nPressione qualquer tecla para continuar." << endl;
-    
+    pthread_mutex_unlock(&mutexClientDirectory);    
 }
 
 void deleteCommand (string command, clientStruct *menuParameters) {
@@ -134,14 +131,11 @@ void deleteCommand (string command, clientStruct *menuParameters) {
     directoryPathStr[directoryPath.length()] = '\0';
 
     if (remove(directoryPathStr) != 0)
-        cerr << "Erro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
-    //else
-        //cout << "\nArquivo " << directoryPath << " removido com sucesso." << endl;
+        cerr << "\n\nErro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
+    else
+        textToImpress << "\n\nArquivo " << directoryPath << " removido com sucesso." << endl;
 
-    free(directoryPathStr);
-
-    //cout << "\nPressione qualquer tecla para continuar." << endl;
-    
+    free(directoryPathStr);    
 }
 
 void deleteInotify(string username, string fileName, int clientSocket) {
@@ -154,7 +148,5 @@ void deleteInotify(string username, string fileName, int clientSocket) {
     clientPacket.fileName[clientPacket.fileNameLength-1] = '\0';
 
     sendRequestDeletePacket(clientSocket, &clientPacket);
-    //cout << "Comando de requisicao de delete executado com sucesso." << endl;
-
     free(clientPacket.fileName);
 }

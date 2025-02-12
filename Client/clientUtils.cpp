@@ -5,12 +5,15 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <netinet/in.h>
+#include <sstream>
 
 #include "clientConstants.hpp"
 #include "clientCommands.hpp"
 #include "clientPacketSending.hpp"
 #include "packetEnum.hpp"
 #include "packetStruct.hpp"
+
+extern stringstream textToImpress;
 
 using namespace std;
 
@@ -190,45 +193,42 @@ void createClientDirectory(char username[]) {
 
     if (stat(client_directory_name, &st) == -1) 
         if (mkdir(client_directory_name, 0777) == -1) {
-            cerr << "Erro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
+            cerr << "\n\nErro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
             exit(1);
         }     
 }
 
 void helpMenu() {
-    system("clear");
-    cout << "LISTA DE COMANDOS:" << endl;
-    cout << "-----------------------------------------------\n" << endl;
+    textToImpress << "LISTA DE COMANDOS:" << endl;
+    textToImpress << "-----------------------------------------------\n" << endl;
 
-    cout << "COMANDO:" << endl;
-    cout << "upload <path/filename.ext>" << endl;
-    cout << "DESCRICAO:" << endl;
-    cout << "Envia o arquivo filename.ext para o servidor, colocando-o no “sync_dir” do  servidor e propagando-o para todos os dispositivos daquele usuario.e.g. upload /home/user/MyFolder/filename.ext\n"  << endl;
+    textToImpress << "COMANDO:" << endl;
+    textToImpress << "upload <path/filename.ext>" << endl;
+    textToImpress << "DESCRICAO:" << endl;
+    textToImpress << "Envia o arquivo filename.ext para o servidor, colocando-o no “sync_dir” do  servidor e propagando-o para todos os dispositivos daquele usuario.e.g. upload /home/user/MyFolder/filename.ext\n"  << endl;
 
-    cout << "COMANDO:" << endl;
-    cout << "download <filename.ext>" << endl;
-    cout << "DESCRICAO:" << endl;
-    cout << "Faz uma copia nao sincronizada do arquivo filename.ext do servidor para o diretorio local (de onde o servidor foi chamado). e.g. download mySpreadsheet.xlsx\n" << endl;
+    textToImpress << "COMANDO:" << endl;
+    textToImpress << "download <filename.ext>" << endl;
+    textToImpress << "DESCRICAO:" << endl;
+    textToImpress << "Faz uma copia nao sincronizada do arquivo filename.ext do servidor para o diretorio local (de onde o servidor foi chamado). e.g. download mySpreadsheet.xlsx\n" << endl;
 
-    cout << "COMANDO:" << endl;
-    cout << "delete <filename.ext>" << endl;
-    cout << "DESCRICAO:" << endl;
-    cout << "Exclui o arquivo <filename.ext> de “sync_dir”.\n"  << endl;
+    textToImpress << "COMANDO:" << endl;
+    textToImpress << "delete <filename.ext>" << endl;
+    textToImpress << "DESCRICAO:" << endl;
+    textToImpress << "Exclui o arquivo <filename.ext> de “sync_dir”.\n"  << endl;
 
-    cout << "COMANDO:" << endl;
-    cout << "list_server" << endl;
-    cout << "DESCRICAO:" << endl;
-    cout << "Lista os arquivos salvos no servidor, associados ao usuario.\n"  << endl;
+    textToImpress << "COMANDO:" << endl;
+    textToImpress << "list_server" << endl;
+    textToImpress << "DESCRICAO:" << endl;
+    textToImpress << "Lista os arquivos salvos no servidor, associados ao usuario.\n"  << endl;
 
-    cout << "COMANDO:" << endl;
-    cout << "list_client" << endl;
-    cout << "DESCRICAO:" << endl;
-    cout << "Lista os arquivos salvos no diretorio “sync_dir”.\n"  << endl;
+    textToImpress << "COMANDO:" << endl;
+    textToImpress << "list_client" << endl;
+    textToImpress << "DESCRICAO:" << endl;
+    textToImpress << "Lista os arquivos salvos no diretorio “sync_dir”.\n"  << endl;
 
-    cout << "COMANDO:" << endl;
-    cout << "exit" << endl;
-    cout << "DESCRICAO:" << endl;
-    cout << "Fecha a sessao com o servidor.\n"  << endl;
-
-        ;
+    textToImpress << "COMANDO:" << endl;
+    textToImpress << "exit" << endl;
+    textToImpress << "DESCRICAO:" << endl;
+    textToImpress << "Fecha a sessao com o servidor.\n"  << endl;
 }

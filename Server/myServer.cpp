@@ -106,12 +106,8 @@ void serverLoop (int serverSocket) {
     while (true) {
 
         int clientSocket = accept(serverSocket, nullptr, nullptr);
-
-        //system("clear");
+        
         threadNumber++;
-
-        //cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
-        //cout << "Nova conexao aceita com sucesso. Numero de conexoes aceitas ate o momento: " << threadNumber << endl;
 
         clientThreads = (pthread_t*) realloc(clientThreads,threadNumber*sizeof(pthread_t));
 
@@ -130,9 +126,14 @@ void startServerSocket() {
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(SERVER_PORT_NUMBER);
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
     bind(serverSocket,(struct sockaddr*)&serverAddress, sizeof(serverAddress));
     listen(serverSocket,MAX_SERVER_QUEUE_SIZE);
+
+    system("clear");
+    cout << "PROJETO DE SISTEMAS OPERACIONAIS II" << endl;
+    cout << "AUTOR: ANDREI POCHMANN KOENICH\n" << endl;
+    cout << "-----------------------------------------------\n" << endl;
 
     cout << "Servidor escutando na porta " << SERVER_PORT_NUMBER << "..." << endl;
     serverLoop(serverSocket);
