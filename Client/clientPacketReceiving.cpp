@@ -52,12 +52,12 @@ void receiveDownloadPacket(int clientSocket, string username) {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        cerr << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
+        textToImpress << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
         //exit(1);
     }
 
     if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
-        cerr << "\n\nErro na escrita do arquivo, ao utilizar o comando download." << endl;
+        textToImpress << "\n\nErro na escrita do arquivo, ao utilizar o comando download." << endl;
         //exit(1);
     }
 
@@ -115,12 +115,12 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        cerr << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
+        textToImpress << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
         //exit(1);
     }
  
     if(clientPacket.payloadLength != 0 && fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength,selectedFile) != (size_t)clientPacket.payloadLength) {
-        cerr << "\n\nErro na escrita do arquivo ao realizar a propagacao do upload." << endl;
+        textToImpress << "\n\nErro na escrita do arquivo ao realizar a propagacao do upload." << endl;
         //exit(1);
     }
 
@@ -174,7 +174,7 @@ void receiveDeletePropagationPacket(int clientSocket, string username) {
     strcat(filePath,clientPacket.fileName);
 
     if (remove(filePath) != 0)
-        cerr << "\n\nErro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
+        textToImpress << "\n\nErro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
     else
         //cout << "Arquivo " << filePath << " removido com sucesso." << endl;
 
@@ -223,7 +223,7 @@ void* receivePacketFromServerLoop (void* parameters) {
                 receiveDownloadPacket(menuParameters->clientSocket, menuParameters->username);
             break;
             case DOWNLOAD_ERROR:
-                cerr << "\n\nErro ao tentar fazer download do arquivo no servidor." << endl;
+                textToImpress << "\n\nErro ao tentar fazer download do arquivo no servidor." << endl;
             break;
             case LIST_SERVER:
                 receiveListServerPacket(menuParameters->clientSocket);

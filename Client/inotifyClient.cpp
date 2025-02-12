@@ -2,6 +2,7 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sstream>
 
 #include "clientConstants.hpp"
 #include "clientUtils.hpp"
@@ -19,6 +20,8 @@ extern pthread_mutex_t mutexClientDirectory;
 
 extern propagationInfo lastUploadPropagation;
 extern propagationInfo lastDeletePropagation;
+
+extern stringstream textToImpress;
 
 void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
@@ -39,7 +42,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
 
     FILE *selectedFile;
     if((selectedFile = fopen(filePath, "rb")) == NULL) {
-        cerr << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload pelo Inotify." << endl;       
+        textToImpress << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload pelo Inotify." << endl;       
         return;
     }
 
@@ -62,7 +65,7 @@ void uploadInotify(string fileName, clientStruct *menuParameters)  {
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != (size_t)fileLength) {
-        cerr << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload pelo Inotify." << endl;
+        textToImpress << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload pelo Inotify." << endl;
         fclose(selectedFile);    
         return;
     }
@@ -131,14 +134,14 @@ void* monitorClientDirectory (void* parameters) {
 
     int inotify_fd = inotify_init();
     if (inotify_fd < 0) {
-        cerr << "Erro ao inicializar inotify." << endl;
+        textToImpress << "Erro ao inicializar inotify." << endl;
         return NULL;
     }
 
     int watch_descriptor = inotify_add_watch(inotify_fd, clientDirectory, IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE | IN_CREATE);
     
     if (watch_descriptor < 0) {
-        cerr << "Erro ao adicionar watch ao diretório." << endl;
+        textToImpress << "Erro ao adicionar watch ao diretório." << endl;
         close(inotify_fd);
         return NULL;
     }
@@ -152,7 +155,7 @@ void* monitorClientDirectory (void* parameters) {
     while (true) {
         int length = read(inotify_fd, buffer, BUF_LEN);
         if (length < 0) {
-            cerr << "Erro ao ler eventos do inotify." << endl;
+            textToImpress << "Erro ao ler eventos do inotify." << endl;
             break;
         }
 

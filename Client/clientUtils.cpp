@@ -193,7 +193,7 @@ void createClientDirectory(char username[]) {
 
     if (stat(client_directory_name, &st) == -1) 
         if (mkdir(client_directory_name, 0777) == -1) {
-            cerr << "\n\nErro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
+            textToImpress << "\n\nErro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
             exit(1);
         }     
 }

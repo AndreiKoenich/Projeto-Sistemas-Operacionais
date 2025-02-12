@@ -54,7 +54,7 @@ int serverConnection(char *argv[]) {
     serverAddress.sin_port = htons(stoi(argv[3]));
 
     if (connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) {
-        cerr << "Erro na conexao do cliente com o servidor." << endl;
+        textToImpress << "Erro na conexao do cliente com o servidor." << endl;
         close(clientSocket);
         exit(1);
     }
@@ -111,7 +111,7 @@ void* showMenu(void* parameters) {
 int main(int argc, char *argv[]) {
 
     if (argc != NUMBER_OF_PARAMETERS+1) {
-        cerr << "Erro no formato do comando para executar o myClient. Formato correto:" << endl;
+        textToImpress << "Erro no formato do comando para executar o myClient. Formato correto:" << endl;
         cout << "./myClient <username> <server_ip_address> <port>" << endl;
         exit(1);
     }
