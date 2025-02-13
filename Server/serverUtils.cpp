@@ -54,8 +54,8 @@ string showPacketType(int value) {
             return "REQUEST_LIST_SERVER";
         case LIST_SERVER:
             return "LIST_SERVER";
-        case BYE:
-            return "BYE";
+        case BYE_CLIENT:
+            return "BYE_CLIENT";
         default:
             return "UNKNOWN";
     }
@@ -122,8 +122,8 @@ void showDownloadPacketServer (DownloadPacket clientPacket) {
 
 void showByePacketServer (string username) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote BYE do usuario "<< username <<" recebido com sucesso.\n" << endl;
-    cout << "Tipo: BYE" << endl;
+    cout << "Pacote BYE_CLIENT do usuario "<< username <<" recebido com sucesso.\n" << endl;
+    cout << "Tipo: BYE_CLIENT" << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
 

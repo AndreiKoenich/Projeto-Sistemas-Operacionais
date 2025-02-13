@@ -30,7 +30,7 @@ void exitCommand(int clientSocket) {
 
     pthread_cancel(propagationThread);
     ByePacket clientPacket;  
-    clientPacket.packetType = BYE;
+    clientPacket.packetType = BYE_CLIENT;
     sendByePacket(clientSocket, &clientPacket);
     close(clientSocket);
     pthread_cancel(inotifyThread);
@@ -54,7 +54,7 @@ int serverConnection(char *argv[]) {
     serverAddress.sin_port = htons(stoi(argv[3]));
 
     if (connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) {
-        textToImpress << "Erro na conexao do cliente com o servidor." << endl;
+        cerr << "Erro na conexao do cliente com o servidor." << endl;
         close(clientSocket);
         exit(1);
     }

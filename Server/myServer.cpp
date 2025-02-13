@@ -89,7 +89,7 @@ void* receivePacketFromClient (void* threadInfo) {
             case DELETE_INOTIFY:
                 receiveRequestDeletePacket(clientInfo.clientSocket, clientInfo.username, packetType);
             break;
-            case BYE:
+            case BYE_CLIENT:
                 removeClientFromList(&clientInfo);
             break;
         }

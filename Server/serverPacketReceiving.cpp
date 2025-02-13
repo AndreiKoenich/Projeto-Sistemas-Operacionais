@@ -185,7 +185,7 @@ void receiveUploadPacket (int clientSocket, string username, uint16_t packetType
     username.copy(usernameStr,username.length());
     usernameStr[username.length()] = '\0';
     strcat(filePath,usernameStr);
-    strcat(filePath,"//");
+    strcat(filePath,"/");
     strcat(filePath,clientPacket.fileName);
 
     FILE *selectedFile;

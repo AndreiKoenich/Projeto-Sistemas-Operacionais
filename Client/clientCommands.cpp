@@ -38,7 +38,7 @@ void uploadCommand(string command, clientStruct *menuParameters) {
     UploadPacket clientPacket;    
     FILE *selectedFile;
     if((selectedFile = fopen(filePath.data(), "rb")) == NULL) {
-        textToImpress << "\n\nErro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload." << endl;
+        textToImpress << "Erro na abertura do arquivo para envio ao servidor, ao tentar executar o comando upload." << endl;
         return;
     }
 
@@ -62,7 +62,7 @@ void uploadCommand(string command, clientStruct *menuParameters) {
 	clientPacket.payload =(char*)calloc(fileLength,sizeof(char));
 
     if(fread(clientPacket.payload, sizeof(char), fileLength, selectedFile) != fileLength) {
-        textToImpress << "\n\nErro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
+        textToImpress << "Erro na leitura do arquivo para inserir os dados em buffer, ao tentar executar o comando upload." << endl;
         fclose(selectedFile);
         return;
     }
@@ -131,9 +131,9 @@ void deleteCommand (string command, clientStruct *menuParameters) {
     directoryPathStr[directoryPath.length()] = '\0';
 
     if (remove(directoryPathStr) != 0)
-        textToImpress << "\n\nErro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
+        textToImpress << "Erro ao tentar remover o arquivo no diretorio " << directoryPathStr << endl;
     else
-        textToImpress << "\n\nArquivo " << directoryPath << " removido com sucesso." << endl;
+        textToImpress << "Arquivo " << directoryPath << " removido com sucesso." << endl;
 
     RequestDeletePacket clientPacket;
     clientPacket.packetType = DELETE_INOTIFY;

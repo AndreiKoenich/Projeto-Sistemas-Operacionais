@@ -66,8 +66,8 @@ string showPacketType(int value) {
             return "REQUEST_LIST_SERVER";
         case LIST_SERVER:
             return "LIST_SERVER";
-        case BYE:
-            return "BYE";
+        case BYE_CLIENT:
+            return "BYE_CLIENT";
         default:
             return "UNKNOWN";
     }
@@ -122,7 +122,7 @@ void showHelloPacketClient (HelloPacket clientPacket) {
 
 void showByePacketClient (ByePacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote BYE enviado com sucesso.\n" << endl;
+    cout << "Pacote BYE_CLIENT enviado com sucesso.\n" << endl;
     cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "-----------------------------------------------\n" << endl;
 }
@@ -193,9 +193,9 @@ void createClientDirectory(char username[]) {
 
     if (stat(client_directory_name, &st) == -1) 
         if (mkdir(client_directory_name, 0777) == -1) {
-            textToImpress << "\n\nErro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
+            textToImpress << "Erro ao criar o diretorio " << client_directory_name << "para sincronizacao dos arquivos." << endl;
             exit(1);
-        }     
+        }
 }
 
 void helpMenu() {

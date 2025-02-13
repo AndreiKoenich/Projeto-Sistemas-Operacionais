@@ -51,15 +51,12 @@ void receiveDownloadPacket(int clientSocket, string username) {
     strcat(filePath,clientPacket.fileName);
 
     FILE *selectedFile;
-    if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        textToImpress << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
-        //exit(1);
-    }
+    if((selectedFile = fopen(filePath, "wb")) == NULL) 
+        textToImpress << "Erro na criacao ou abertura do arquivo para escrita no diretorio do cliente, ao tentar executar o comando download." << endl;
+    
 
-    if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1) {
-        textToImpress << "\n\nErro na escrita do arquivo, ao utilizar o comando download." << endl;
-        //exit(1);
-    }
+    if(fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1)
+        textToImpress << "Erro na escrita do arquivo, ao utilizar o comando download." << endl;
 
     fclose(selectedFile);
     free(clientPacket.fileName);
@@ -75,6 +72,7 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
     UploadPacket clientPacket;
     uint16_t payloadLength;
     uint16_t fileNameLength;
+
 
     clientPacket.packetType = UPLOAD_PROPAGATION;
 
@@ -93,8 +91,7 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
         clientPacket.payload =(char*)calloc(clientPacket.payloadLength,sizeof(char));
         recv(clientSocket, clientPacket.payload, payloadLength, 0);
     }
-    //clientPacket.payload[clientPacket.payloadLength-1] = '\0';
-
+    
     pthread_mutex_unlock(&mutexClientSocket);
 
     //showReceivedPropagationPacketClient(clientPacket);
@@ -106,23 +103,19 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
     strcat(filePath,CLIENT_DIRECTORY_PREFIX);
     char* usernameStr = (char*)calloc(username.length()+1,sizeof(char));
     username.copy(usernameStr,username.length());
-    usernameStr[username.length()] = '\0';
     strcat(filePath,usernameStr);
     strcat(filePath,"/");
     strcat(filePath,clientPacket.fileName);
 
-    //cout << "Diretorio de recebimento de propagacao:\n" << filePath << endl;
 
     FILE *selectedFile;
-    if((selectedFile = fopen(filePath, "wb")) == NULL) {
-        textToImpress << "\n\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
-        //exit(1);
-    }
- 
-    if(clientPacket.payloadLength != 0 && fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength,selectedFile) != (size_t)clientPacket.payloadLength) {
-        textToImpress << "\n\nErro na escrita do arquivo ao realizar a propagacao do upload." << endl;
-        //exit(1);
-    }
+
+    if((selectedFile = fopen(filePath, "wb")) == NULL) 
+        textToImpress << "\nErro na criacao ou abertura do arquivo para escrita no diretorio do cliente na propagacao de upload." << endl;
+
+    if(clientPacket.payloadLength != 0 && fwrite(clientPacket.payload, sizeof(char),clientPacket.payloadLength-1,selectedFile) != (size_t)clientPacket.payloadLength-1)
+        textToImpress << "\nErro na escrita do arquivo ao realizar a propagacao do upload." << endl;
+
 
     lastUploadPropagation.filename = clientPacket.fileName;
 
@@ -131,12 +124,13 @@ void receiveUploadPropagationPacket(int clientSocket, string username) {
     else
         lastUploadPropagation.payload = "";
 
-    fclose(selectedFile);
     free(usernameStr);
     free(clientPacket.fileName);
 
     if (clientPacket.payloadLength != 0)
         free(clientPacket.payload);
+
+    fclose(selectedFile);
 
     pthread_mutex_unlock(&mutexClientDirectory);
 }
@@ -174,9 +168,7 @@ void receiveDeletePropagationPacket(int clientSocket, string username) {
     strcat(filePath,clientPacket.fileName);
 
     if (remove(filePath) != 0)
-        textToImpress << "\n\nErro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
-    else
-        //cout << "Arquivo " << filePath << " removido com sucesso." << endl;
+        textToImpress << "Erro ao tentar remover o arquivo no diretorio " << filePath << " por notificacao de propagacao." << endl;
 
     lastDeletePropagation.filename = clientPacket.fileName;
     lastDeletePropagation.payload = "";
@@ -223,7 +215,7 @@ void* receivePacketFromServerLoop (void* parameters) {
                 receiveDownloadPacket(menuParameters->clientSocket, menuParameters->username);
             break;
             case DOWNLOAD_ERROR:
-                textToImpress << "\n\nErro ao tentar fazer download do arquivo no servidor." << endl;
+                textToImpress << "Erro ao tentar fazer download do arquivo no servidor." << endl;
             break;
             case LIST_SERVER:
                 receiveListServerPacket(menuParameters->clientSocket);
