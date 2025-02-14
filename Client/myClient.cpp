@@ -30,7 +30,7 @@ void exitCommand(int clientSocket) {
 
     pthread_cancel(propagationThread);
     ByePacket clientPacket;  
-    clientPacket.packetType = BYE_CLIENT;
+    clientPacket.packetType = BYE;
     sendByePacket(clientSocket, &clientPacket);
     close(clientSocket);
     pthread_cancel(inotifyThread);

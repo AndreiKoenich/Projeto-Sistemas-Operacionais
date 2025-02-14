@@ -19,17 +19,11 @@ using namespace std;
 
 void reverseString(char* str)
 {
-    if (!str) 
-        return;
-    int i = 0;
-    int j = strlen(str) - 1;
-    while (i < j) {
-        char c = str[i];
-        str[i] = str[j];
-        str[j] = c;
-        i++;
-        j--;
-    }
+    int strSize = strlen(str);
+    char aux[strSize+1];
+    strcpy(aux,str);
+    for (int i = 0; str[i] != '\0'; i++)
+        str[i] = aux[strSize-i-1];
 }
 
 string timeToString(time_t rawTime) {
@@ -66,8 +60,8 @@ string showPacketType(int value) {
             return "REQUEST_LIST_SERVER";
         case LIST_SERVER:
             return "LIST_SERVER";
-        case BYE_CLIENT:
-            return "BYE_CLIENT";
+        case BYE:
+            return "BYE";
         default:
             return "UNKNOWN";
     }
@@ -122,7 +116,7 @@ void showHelloPacketClient (HelloPacket clientPacket) {
 
 void showByePacketClient (ByePacket clientPacket) {
     cout << "\n-----------------------------------------------" << endl;
-    cout << "Pacote BYE_CLIENT enviado com sucesso.\n" << endl;
+    cout << "Pacote BYE enviado com sucesso.\n" << endl;
     cout << "Tipo:" << showPacketType(clientPacket.packetType) << endl;
     cout << "-----------------------------------------------\n" << endl;
 }

@@ -11,6 +11,5 @@ enum packetType {
     DELETE_PROPAGATION,
     REQUEST_LIST_SERVER,
     LIST_SERVER,
-    BYE_CLIENT,
-    BYE_SERVER
+    BYE
 };
