@@ -1,4 +1,5 @@
-Este projeto foi desenvolvido na disciplina de Sistemas Operacionais II da Universidade Federal do Rio Grande do Sul.
+Este projeto foi desenvolvido na disciplina de Sistemas Operacionais II da Universidade Federal do Rio Grande do Sul, e consiste
+em uma aplicação semelhante ao Dropbox.
 
 O objetivo é colocar em prática os conceitos de comunicação e sincronização de processos, abordados em aula.
 
